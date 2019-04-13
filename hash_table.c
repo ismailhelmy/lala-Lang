@@ -1,4 +1,3 @@
-#include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -6,21 +5,24 @@
 // Also the chain has to be greater than 50
 #define CHAIN 53
 
-typedef union {
+union Value{
     int valueInt;
     float valueFloat;
     char* valueString;
     char* variableName;
-    bool valueBool;
-} Value;
+    int valueBool;
+};
 
-typedef struct {
+typedef union Value Value;
+
+struct Symbol{
     Value value;
     char* variableName;
     char* type;
     int scope;
+};
 
-} symbol;
+typedef struct Symbol symbol;
 
 struct node {
     char* key;
@@ -41,7 +43,25 @@ int getHash(char* variableName)
     return (sum % CHAIN);
 }
 
-bool insertSymbol(symbol * newSymbol)
+/// Searches for a symbol, returns true if it already exists.
+/// Returns false if it does not.
+int searchSymbol(symbol * searchKey)
+{
+    int predictedIndex = getHash(searchKey->variableName);
+    struct node* predictedNode = table[predictedIndex];
+
+    while(predictedNode != NULL){
+        if(strcmp(predictedNode->key, searchKey->variableName) && predictedNode->value->scope == searchKey->scope)
+        {
+            // We found it.
+            return 1;
+        }
+        predictedNode = predictedNode->next;
+    }
+    return 0;
+}
+
+int insertSymbol(symbol * newSymbol)
 {
     struct node * newNode;
     newNode->key = newSymbol->variableName;
@@ -51,9 +71,10 @@ bool insertSymbol(symbol * newSymbol)
 
     // Check if the variable name exists in the table before.
     // namely, the variable name is seen before with the same scope id.
-    if(searchSymbol(newSymbol))
+    int found = searchSymbol(newSymbol);
+    if(found == 1)
     {
-        return false;
+        return 0;
     }
 
     // The symbol does not exist, meaning we can add it.
@@ -69,32 +90,45 @@ bool insertSymbol(symbol * newSymbol)
         newNode->next = oldHead;
         table[index] = newNode;
     }
-    return true;
+    return 0;
 }
 
-/// Searches for a symbol, returns true if it already exists.
-/// Returns false if it does not.
-bool searchSymbol(symbol * searchKey)
+/// Finds the symbol, and returns it.
+/// If the status code is false, then the symbol is not found.
+symbol * findSymbol(char* variableName, int * statusCode)
 {
-    int predictedIndex = getHash(searchKey->variableName);
+    int predictedIndex = getHash(variableName);
+
     struct node* predictedNode = table[predictedIndex];
 
-    while(predictedNode != NULL){
-        if(strcmp(predictedNode->key, searchKey->variableName) && predictedNode->value->scope == searchKey->scope)
+    while(predictedNode != NULL)
+    {
+        if(strcmp(variableName, predictedNode->value->variableName))
         {
-            // We found it.
-            return true;
+            *statusCode = 1;
+            return predictedNode->value;
         }
-        predictedNode = predictedNode->next;
     }
-    return false;
+    *statusCode = 0;
+    return NULL;
 }
-
-
 
 void main()
 {
     char* name = "value";
-    int hash = getHash(name);
-    printf("Value of hash is : %d \n", hash);
+    symbol* symbol;
+    symbol->variableName = name;
+    symbol->scope = 1;
+    symbol->type = "int";
+    symbol->value.valueInt = 5;
+    if(insertSymbol(symbol))
+    {
+        printf("We have inserted that symbol perfectly, cool\n");
+    }
+    int isFound;
+    symbol = findSymbol(name, &isFound);
+    if(isFound)
+    {
+        printf("Found the symbol with name %s, with value: %d", name, symbol->value.valueInt);
+    }
 }
