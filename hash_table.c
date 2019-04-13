@@ -114,25 +114,85 @@ symbol * findSymbol(char* variableName, int * statusCode)
     return NULL;
 }
 
+void updateNodeEntry(struct node * p, Value newVal)
+{
+    if(strcmp(p->value->type,"int") == 0)
+    {
+        p->value->value.valueInt = newVal.valueInt;
+    }else if(strcmp(p->value->type, "string") == 0)
+    {
+        p->value->value.valueString = newVal.valueString;
+    }else if(strcmp(p->value->type, "float") == 0)
+    {
+        p->value->value.valueFloat = newVal.valueFloat;
+    }else if(strcmp(p->value->type,"boolean") == 0)
+    {
+        p->value->value.valueBool = newVal.valueBool;
+    }
+}
+
+// Update a table entry
+int updateSymbol(char * variableName, Value val)
+{
+    int predictedIndex = getHash(variableName);
+
+    struct node * predictedNode = table[predictedIndex];
+
+    while(predictedNode != NULL)
+    {
+        if(strcmp(variableName, predictedNode->value->variableName) == 0)
+        {
+            updateNodeEntry(predictedNode, val);
+            return 1;
+        }
+    }
+    return 0;
+}
+
 void printTableEntry(struct node* startingNode)
 {
     struct node* p = startingNode;
 
     while(p != NULL)
     {
-        printf("%s\t%s\t%d\t", p->value->variableName, p->value->type, (p->value->value.valueInt));
+        if(strcmp(p->value->type,"int") == 0)
+        {
+            printf("%s\t%s\t%d\n", p->value->variableName, p->value->type, (p->value->value.valueInt));
+        }else if(strcmp(p->value->type, "string") == 0)
+        {
+            printf("%s\t%s\t%s\n", p->value->variableName, p->value->type, p->value->value.valueString);
+        }else if(strcmp(p->value->type, "float") == 0)
+        {
+            printf("%s\t%s\t%f\n", p->value->variableName, p->value->type, p->value->value.valueFloat);
+        }else if(strcmp(p->value->type,"boolean") == 0)
+        {
+            printf("%s\t%s\t%s\n", p->value->variableName, p->value->type, p->value->value.valueBool == 1? "true": "false");
+        }
         p = p->next;
     }
 }
 
 void printTable()
 {
-    printf("id\ttype\tvalue\n");
+    printf("id\ttype\tvalue\n-----------------------\n");
     for(int i = 0; i < CHAIN; i++)
     {
         printTableEntry(table[i]);
     }
     printf("\n");
+}
+
+symbol* createSymbol(char * name, char* type, Value value, int scope)
+{
+    symbol * mysymbol = malloc(sizeof(symbol));
+    mysymbol->variableName = malloc(strlen(name));
+    strcpy(mysymbol->variableName, name);
+    mysymbol->type = malloc(strlen(type));
+    strcpy(mysymbol->type, type);
+    mysymbol->scope = scope;
+    mysymbol->value = value;
+
+    return mysymbol;
 }
 
 void main()
@@ -155,5 +215,31 @@ void main()
     {
         printf("Found the symbol with name %s, with value: %d\n", name, mysymbol->value.valueInt);
     }
+    //printTable();
+
+    Value val;
+    val.valueFloat = 10.5f;
+    symbol * secondSymbol = createSymbol("ismail", "float", val, 0);
+
+    val.valueBool = 0;
+    symbol * thirdSymbol = createSymbol("isFound" , "boolean", val, 2);
+
+    int insert = insertSymbol(secondSymbol);
+    insertSymbol(thirdSymbol);
     printTable();
+    Value newVal;
+    newVal.valueBool = 1;
+    updateSymbol("isFound", newVal);
+    printf("Updated isFound to true\n");
+    printTable();
+
+    newVal.valueString = "ibrahim";
+    insertSymbol(createSymbol("name", "string", newVal, 2));
+    printf("\nAdded a new string variable\n");
+    printTable();
+
+    newVal.valueString = "ismail";
+    updateSymbol("name", newVal);
+    printTable();
+
 }
