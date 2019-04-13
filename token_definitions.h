@@ -33,11 +33,8 @@
 #define MINUS_EQUAL 34
 #define IMPORT_KEYWORD 35
 #define COMMA 36
-<<<<<<< HEAD
 #define IF_KEYWORD
-=======
 #define OPEN_BRACKET 37
 #define CLOSED_BRACKET 38
 #define SCOPE_BEGINING 39
 #define SCOPE_END 40
->>>>>>> 442e16baf2b91864e8d9e8109564f946043c56f6
