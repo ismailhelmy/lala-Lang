@@ -1,7 +1,7 @@
-#define NUMBER_KEYWORD 1
+#define INT_KEYWORD 1
 #define STRING_KEYWORD 2
 #define BOOLEAN_KEYWORD 3
-#define NUMBER 4
+#define INT 4
 #define STRING 5
 #define BOOLEAN 6
 #define ADD 7
@@ -19,3 +19,5 @@
 #define OR 19
 #define EQUAL 20
 #define VARIABLE 21
+#define FLOAT 22
+#define FLOAT_KEYWORD 23
