@@ -34,7 +34,7 @@ or|ou|ovvero                          { return LOGICAL_OR; }
 ==|égal\?|pari\?                      { return LOGICAL_EQUAL; }
 !=|neqal\?|nonpari\?                  { return NOT_EQUAL; }
 
-if|si|se                              { return IF; }
+if|si|se                              { return IF_KEYWORD; }
 else|autre|altro                      { return ELSE; }
 while|quoique|sebbene                 { return WHILE_KEYWORD; }
 for|pendant|per                       { return FOR_KEYWORD; }

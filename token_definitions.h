@@ -15,8 +15,8 @@
 #define BITWISE_NOT 15
 #define LOGICAL_EQUAL 16
 #define NOT_EQUAL 17
-#define AND 18
-#define OR 19
+#define LOGICAL_AND 18
+#define LOGICAL_OR 19
 #define EQUAL 20
 #define VARIABLE 21
 #define FLOAT 22
@@ -33,3 +33,4 @@
 #define MINUS_EQUAL 34
 #define IMPORT_KEYWORD 35
 #define COMMA 36
+#define IF_KEYWORD
