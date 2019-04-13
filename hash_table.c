@@ -66,7 +66,6 @@ int insertSymbol(symbol * newSymbol)
     struct node * newNode;
     newNode->key = newSymbol->variableName;
     newNode->value = newSymbol;
-
     int index = getHash(newNode->key);
 
     // Check if the variable name exists in the table before.
