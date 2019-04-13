@@ -21,3 +21,15 @@
 #define VARIABLE 21
 #define FLOAT 22
 #define FLOAT_KEYWORD 23
+#define WHILE_KEYWORD 24
+#define FOR_KEYWORD 25
+#define LESS_THAN 26
+#define LESS_THAN_EQUAL 27
+#define GREATER_THAN 28
+#define GREATER_THAN_EQUAL 29
+#define SEMI_COLON 30
+#define MODOLU 31
+#define PLUS_EQUAL 33
+#define MINUS_EQUAL 34
+#define IMPORT_KEYWORD 35
+#define COMMA 36
