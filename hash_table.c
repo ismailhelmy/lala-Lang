@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 // Pretty much any prime number is okay for the chain value
 // Also the chain has to be greater than 50
@@ -15,14 +16,14 @@ union Value{
 
 typedef union Value Value;
 
-struct Symbol{
+struct symbol{
     Value value;
     char* variableName;
     char* type;
     int scope;
 };
 
-typedef struct Symbol symbol;
+typedef struct symbol symbol;
 
 struct node {
     char* key;
@@ -63,7 +64,7 @@ int searchSymbol(symbol * searchKey)
 
 int insertSymbol(symbol * newSymbol)
 {
-    struct node * newNode;
+    struct node * newNode = malloc(sizeof(struct node));
     newNode->key = newSymbol->variableName;
     newNode->value = newSymbol;
     int index = getHash(newNode->key);
@@ -89,7 +90,7 @@ int insertSymbol(symbol * newSymbol)
         newNode->next = oldHead;
         table[index] = newNode;
     }
-    return 0;
+    return 1;
 }
 
 /// Finds the symbol, and returns it.
@@ -102,32 +103,57 @@ symbol * findSymbol(char* variableName, int * statusCode)
 
     while(predictedNode != NULL)
     {
-        if(strcmp(variableName, predictedNode->value->variableName))
+        if(strcmp(variableName, predictedNode->value->variableName) == 0)
         {
             *statusCode = 1;
             return predictedNode->value;
         }
+        predictedNode = predictedNode->next;
     }
     *statusCode = 0;
     return NULL;
 }
 
+void printTableEntry(struct node* startingNode)
+{
+    struct node* p = startingNode;
+
+    while(p != NULL)
+    {
+        printf("%s\t%s\t%d\t", p->value->variableName, p->value->type, (p->value->value.valueInt));
+        p = p->next;
+    }
+}
+
+void printTable()
+{
+    printf("id\ttype\tvalue\n");
+    for(int i = 0; i < CHAIN; i++)
+    {
+        printTableEntry(table[i]);
+    }
+    printf("\n");
+}
+
 void main()
 {
     char* name = "value";
-    symbol* symbol;
-    symbol->variableName = name;
-    symbol->scope = 1;
-    symbol->type = "int";
-    symbol->value.valueInt = 5;
-    if(insertSymbol(symbol))
+    symbol * mysymbol = malloc(sizeof(symbol));
+    mysymbol->variableName = malloc(strlen(name));
+    strcpy(mysymbol->variableName, name);
+    mysymbol->value.valueInt = 5;
+    mysymbol->scope = 1;
+    mysymbol->type = "int";
+    int hey = insertSymbol(mysymbol);
+    if(hey == 1)
     {
-        printf("We have inserted that symbol perfectly, cool\n");
+        printf("We have inserted that symbol perfectly, cool %d\n", 0);
     }
     int isFound;
-    symbol = findSymbol(name, &isFound);
+    mysymbol = findSymbol(name, &isFound);
     if(isFound)
     {
-        printf("Found the symbol with name %s, with value: %d", name, symbol->value.valueInt);
+        printf("Found the symbol with name %s, with value: %d\n", name, mysymbol->value.valueInt);
     }
+    printTable();
 }
