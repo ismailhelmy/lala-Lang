@@ -80,6 +80,7 @@ This section is for if statements
 */
 
 ifstmt       : IF_KEYWORD logical_expr SCOPE_BEGINING body SCOPE_END
+             | IF_KEYWORD logical_expr SCOPE_BEGINING body SCOPE_END ELSE_KEYWORD SCOPE_BEGINING SCOPE_END
              ;
 
 
@@ -102,13 +103,15 @@ logical_expr : OPEN_BRACKET logical_expr CLOSED_BRACKET
 /*
 This section is for while statements
 */
-
+whilestmt : WHILE_KEYWORD '(' logical_expr ')' SCOPE_BEGINING body SCOPE_END
+          ;
 
 
 /*
 This section is for for statements
 */
-
+forloop : FOR_KEYWORD '(' assignment SEMI_COLON logical_expr SEMI_COLON math_expr ')'
+        ;
 
 %%
 #include"../lexer/lex.yy.c"
