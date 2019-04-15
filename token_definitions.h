@@ -38,3 +38,4 @@
 #define CLOSED_BRACKET 38
 #define SCOPE_BEGINING 39
 #define SCOPE_END 40
+#define ELSE_KEYWORD 41

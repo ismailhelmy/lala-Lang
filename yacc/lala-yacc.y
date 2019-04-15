@@ -1,8 +1,9 @@
 %{
     #include <stdio.h>
     #include <stdlib.h>
-    #include "hash_table.c"
+   // #include "hash_table.c"
     extern int yylex();
+    void yyerror(char *msg);
 %}
 
 %union{
@@ -10,7 +11,7 @@
     float valueFloat;
     char* valueString;
     char* variableName;
-    bool valueBool;
+   // bool valueBool;
 };
 
 %token <valueInt> INT
@@ -19,11 +20,11 @@
 %token <variableName> VARIABLE
 %token <valueBool> BOOLEAN
 %token INT_KEYWORD STRING_KEYWORD BOOLEAN_KEYWORD FLOAT_KEYWORD ADD SUBTRACT MULTIPLY DIVIDE POWER BITWISE_XOR BITWISE_AND BITWISE_OR BITWISE_NOT LOGICAL_EQUAL NOT_EQUAL LOGICAL_AND LOGICAL_OR EQUAL VARIABLE  
-%token WHILE_KEYWORD IF_KEYWORD FOR_KEYWORD LESS_THAN LESS_THAN_EQUAL GREATER_THAN GREATER_THAN_EQUAL SEMI_COLON MODOLU PLUS_EQUAL MINUS_EQUAL IMPORT_KEYWORD COMMA OPEN_BRACKET CLOSED_BRACKET SCOPE_BEGINING SCOPE_END
+%token WHILE_KEYWORD IF_KEYWORD ELSE_KEYWORD FOR_KEYWORD LESS_THAN LESS_THAN_EQUAL GREATER_THAN GREATER_THAN_EQUAL SEMI_COLON MODOLU PLUS_EQUAL MINUS_EQUAL IMPORT_KEYWORD COMMA OPEN_BRACKET CLOSED_BRACKET SCOPE_BEGINING SCOPE_END
 %right SUBTRACT
 %left ADD
 %left MULTIPLY
-%left DIVIDE
+%right DIVIDE
 %right MODOLU
 %nonassoc PLUS_EQUAL MINUS_EQUAL
 
@@ -37,9 +38,14 @@
 This section is for the body declaration
 */
 
+start   : SCOPE_BEGINING num SCOPE_END {printf("ACCEPTED");}
+        ;
 
-num     : INT 
-        | FLOAT
+
+num     : num INT {printf("ACCEPTED");}
+        | num FLOAT 
+        | INT 
+        | FLOAT 
         ;
 body    : ifstmt body
         | whilestmt body  
@@ -97,10 +103,19 @@ This section is for while statements
 */
 
 whilestmt   : WHILE_KEYWORD OPEN_BRACKET logical_expr CLOSED_BRACKET SCOPE_BEGINING body SCOPE_END
-            | 
 
 /*
 This section is for for statements
 */
 
 forstmt     : FOR_KEYWORD OPEN_BRACKET
+%%
+#include"../lexer/lex.yy.c"
+int main(void){
+    yyparse();
+    return 0;
+}
+void yyerror(char *msg){
+    fprintf(stderr,"%s \n",msg);
+    exit(1);
+}

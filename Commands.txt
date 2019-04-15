@@ -1,0 +1,8 @@
+FOR LEX
+flex *.l file
+
+FOR YACC
+bison -d *.y file
+gcc -o *.exe *.tab.c file
+
+then run the .exe file and try the code.

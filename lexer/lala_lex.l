@@ -1,9 +1,9 @@
 %{
-   #include "defs.h"
+  //include "defs.h"
    #include <stdlib.h>
    #include <stdio.h>
    #include <string.h>
-   void extern yyerror(char*);
+   #include "../yacc/lala-yacc.tab.h"
    void invalidToken();
    int mylineno = 1;
 %}
@@ -35,7 +35,7 @@ or|ou|ovvero                          { return LOGICAL_OR; }
 !=|neqal\?|nonpari\?                  { return NOT_EQUAL; }
 
 if|si|se                              { return IF_KEYWORD; }
-else|autre|altro                      { return ELSE; }
+else|autre|altro                      { return ELSE_KEYWORD; }
 while|quoique|sebbene                 { return WHILE_KEYWORD; }
 for|pendant|per                       { return FOR_KEYWORD; }
 import|importer|importare             { return IMPORT_KEYWORD; }
@@ -54,7 +54,7 @@ import|importer|importare             { return IMPORT_KEYWORD; }
 (-)?[0-9]*\.?[0-9]+                   { yylval.valueFloat = atof(yytext); return FLOAT;}
 \".*\"                                { yylval.valueString = strdup(yytext); return STRING; }
 [a-z_][a-zA-Z0-9]*                    { yylval.variableName = strdup(yytext); return VARIABLE; }
-true|false|vrai|faux|vero|falso       { yylval.valueBool = (strcmp(yytext, "true") || strcmp(yytext, "vrai") || strcmp(yytext, "vero"))? true : false; return BOOLEAN; }
+true|false|vrai|faux|vero|falso       { return BOOLEAN; }
 
 \n                                    { mylineno++; }
 [ \t\r\v\f]+                          { ; }
@@ -64,7 +64,7 @@ true|false|vrai|faux|vero|falso       { yylval.valueBool = (strcmp(yytext, "true
 %%
 
 int yywrap(void){
-    return 1
+    return 1;
 }
 
 void invalidToken(){
