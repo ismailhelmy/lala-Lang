@@ -11,7 +11,7 @@
     float valueFloat;
     char* valueString;
     char* variableName;
-   // bool valueBool;
+    _Bool valueBool;
 };
 
 %token <valueInt> INT
@@ -19,7 +19,7 @@
 %token <valueString> STRING
 %token <variableName> VARIABLE
 %token <valueBool> BOOLEAN
-%token INT_KEYWORD STRING_KEYWORD BOOLEAN_KEYWORD FLOAT_KEYWORD ADD SUBTRACT MULTIPLY DIVIDE POWER BITWISE_XOR BITWISE_AND BITWISE_OR BITWISE_NOT LOGICAL_EQUAL NOT_EQUAL LOGICAL_AND LOGICAL_OR EQUAL VARIABLE  
+%token INT_KEYWORD STRING_KEYWORD BOOLEAN_KEYWORD FLOAT_KEYWORD ADD SUBTRACT MULTIPLY DIVIDE POWER BITWISE_XOR BITWISE_AND BITWISE_OR BITWISE_NOT LOGICAL_EQUAL NOT_EQUAL LOGICAL_AND LOGICAL_OR EQUAL
 %token WHILE_KEYWORD IF_KEYWORD ELSE_KEYWORD FOR_KEYWORD LESS_THAN LESS_THAN_EQUAL GREATER_THAN GREATER_THAN_EQUAL SEMI_COLON MODOLU PLUS_EQUAL MINUS_EQUAL IMPORT_KEYWORD COMMA OPEN_BRACKET CLOSED_BRACKET SCOPE_BEGINING SCOPE_END
 %right SUBTRACT
 %left ADD
@@ -38,7 +38,7 @@
 This section is for the body declaration
 */
 
-start   : SCOPE_BEGINING num SCOPE_END {printf("ACCEPTED");}
+start   : SCOPE_BEGINING body SCOPE_END {printf("ACCEPTED");}
         ;
 
 
@@ -47,20 +47,20 @@ num     : num INT {printf("ACCEPTED");}
         | INT 
         | FLOAT 
         ;
-body    : ifstmt body
-        | whilestmt body  
-        | forstmt body
-        | assignment body
+body    : assignment body {printf("ACCEPTED");}
+        | assignment
+        | ifstmt body
+        ;
 
 /* 
 This section is for assignment
 */
 
-type : FLOAT | INT | STRING | BOOLEAN
+type : num | STRING | BOOLEAN;
 assignment  : INT_KEYWORD VARIABLE EQUAL INT SEMI_COLON
             | STRING_KEYWORD VARIABLE EQUAL STRING SEMI_COLON
             | FLOAT_KEYWORD VARIABLE EQUAL FLOAT SEMI_COLON
-            | BOOLEAN_KEYWORD VARIABLE EQUAL BOOLEAN SEMI_COLON
+            | BOOLEAN_KEYWORD VARIABLE EQUAL INT SEMI_COLON
             | VARIABLE EQUAL VARIABLE SEMI_COLON
             | VARIABLE EQUAL type SEMI_COLON
             | VARIABLE EQUAL math_expr SEMI_COLON
@@ -79,6 +79,9 @@ math_expr   : VARIABLE
 This section is for if statements
 */
 
+ifstmt       : IF_KEYWORD logical_expr SCOPE_BEGINING body SCOPE_END
+             ;
+
 
 logical_expr : OPEN_BRACKET logical_expr CLOSED_BRACKET
              | math_expr LOGICAL_EQUAL logical_expr
@@ -91,24 +94,22 @@ logical_expr : OPEN_BRACKET logical_expr CLOSED_BRACKET
              | math_expr LESS_THAN logical_expr
              | BITWISE_NOT logical_expr
              | BOOLEAN
-
-
-ifstmt      : IF_KEYWORD OPEN_BRACKET logical_expr CLOSED_BRACKET SCOPE_BEGINING body SCOPE_END
-
-
-
+             | INT LOGICAL_EQUAL INT
+             | STRING LOGICAL_EQUAL STRING
+             | FLOAT LOGICAL_EQUAL FLOAT
+             ;
 
 /*
 This section is for while statements
 */
 
-whilestmt   : WHILE_KEYWORD OPEN_BRACKET logical_expr CLOSED_BRACKET SCOPE_BEGINING body SCOPE_END
+
 
 /*
 This section is for for statements
 */
 
-forstmt     : FOR_KEYWORD OPEN_BRACKET
+
 %%
 #include"../lexer/lex.yy.c"
 int main(void){

@@ -49,7 +49,9 @@ import|importer|importare             { return IMPORT_KEYWORD; }
 "<="                                  { return LESS_THAN_EQUAL; }
 "+="                                  { return PLUS_EQUAL; }
 "-="                                  { return MINUS_EQUAL; }
-
+";"                                   { return SEMI_COLON; }
+"("                                   { return OPEN_BRACKET; }
+")"                                   { return CLOSED_BRACKET; }
 (-)?[0-9]+                            { yylval.valueInt = atoi(yytext); return INT; }
 (-)?[0-9]*\.?[0-9]+                   { yylval.valueFloat = atof(yytext); return FLOAT;}
 \".*\"                                { yylval.valueString = strdup(yytext); return STRING; }
