@@ -28,7 +28,7 @@
 #define GREATER_THAN 28
 #define GREATER_THAN_EQUAL 29
 #define SEMI_COLON 30
-#define MODOLU 31SS
+#define MODOLU 31
 #define PLUS_EQUAL 33
 #define MINUS_EQUAL 34
 #define IMPORT_KEYWORD 35
@@ -39,3 +39,5 @@
 #define SCOPE_BEGINING 39
 #define SCOPE_END 40
 #define ELSE_KEYWORD 41
+#define END 42
+#define START 43

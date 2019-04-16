@@ -19,14 +19,16 @@
 %token <valueString> STRING
 %token <variableName> VARIABLE
 %token <valueBool> BOOLEAN
-%token INT_KEYWORD STRING_KEYWORD BOOLEAN_KEYWORD FLOAT_KEYWORD ADD SUBTRACT MULTIPLY DIVIDE POWER BITWISE_XOR BITWISE_AND BITWISE_OR BITWISE_NOT LOGICAL_EQUAL NOT_EQUAL LOGICAL_AND LOGICAL_OR EQUAL
+%token START END INT_KEYWORD STRING_KEYWORD BOOLEAN_KEYWORD FLOAT_KEYWORD ADD SUBTRACT MULTIPLY DIVIDE POWER BITWISE_XOR BITWISE_AND BITWISE_OR BITWISE_NOT LOGICAL_EQUAL NOT_EQUAL LOGICAL_AND LOGICAL_OR EQUAL
 %token WHILE_KEYWORD IF_KEYWORD ELSE_KEYWORD FOR_KEYWORD LESS_THAN LESS_THAN_EQUAL GREATER_THAN GREATER_THAN_EQUAL SEMI_COLON MODOLU PLUS_EQUAL MINUS_EQUAL IMPORT_KEYWORD COMMA OPEN_BRACKET CLOSED_BRACKET SCOPE_BEGINING SCOPE_END
+%token MODULU
 %right SUBTRACT
 %left ADD
 %left MULTIPLY
 %right DIVIDE
 %right MODOLU
-%nonassoc PLUS_EQUAL MINUS_EQUAL
+%right LOGICAL_AND LOGICAL_EQUAL LOGICAL_OR NOT_EQUAL BITWISE_AND BITWISE_XOR BITWISE_OR
+%nonassoc PLUS_EQUAL MINUS_EQUAL BITWISE_NOT
 
 
 %%
@@ -35,83 +37,64 @@
 This section is for the body declaration
 */
 
-start   : SCOPE_BEGINING body SCOPE_END {printf("ACCEPTED");}
+start   : START body END {printf("ACCEPTED");}
         ;
 
 
 num     : num INT {printf("ACCEPTED");}
         | num FLOAT 
         | INT 
-        | FLOAT 
-        | math_expr
-        ;
-body    : assignment body {printf("ACCEPTED");}
-        | assignment
-        | ifstmt body
-        | ifstmt
+        | FLOAT
         ;
 
-/* 
-This section is for assignment
-*/
+keyword     : FLOAT_KEYWORD
+            | INT_KEYWORD
+            | STRING_KEYWORD
+            | BOOLEAN_KEYWORD
+            ;
 
-type : num | STRING | BOOLEAN;
-assignment  : INT_KEYWORD VARIABLE EQUAL INT SEMI_COLON
-            | STRING_KEYWORD VARIABLE EQUAL STRING SEMI_COLON
-            | FLOAT_KEYWORD VARIABLE EQUAL FLOAT SEMI_COLON
-            | BOOLEAN_KEYWORD VARIABLE EQUAL INT SEMI_COLON
-            | VARIABLE EQUAL VARIABLE SEMI_COLON
-            | VARIABLE EQUAL type SEMI_COLON
-            | VARIABLE EQUAL math_expr SEMI_COLON
+declaration : keyword VARIABLE SEMI_COLON;
 
+assignment  : VARIABLE EQUAL expr SEMI_COLON
+            ;
 
-math_expr   : VARIABLE 
+ifstmt :    IF_KEYWORD OPEN_BRACKET condition CLOSED_BRACKET SCOPE_BEGINING body SCOPE_END
+       ;
+       
+expr    : unioperatorexpression
+            | expr MULTIPLY expr
+            | expr DIVIDE expr
             | num
-            | math_expr SUBTRACT math_expr
-            | VARIABLE ADD math_expr
-            | VARIABLE DIVIDE math_expr 
-            | VARIABLE MULTIPLY math_expr
-            | VARIABLE MODOLU math_expr
-            | OPEN_BRACKET math_expr CLOSED_BRACKET
+            | expr ADD expr
+            | expr SUBTRACT expr
+            | VARIABLE
+            | BOOLEAN
+            | expr LOGICAL_AND expr
+            | expr LOGICAL_EQUAL expr
+            | OPEN_BRACKET expr CLOSED_BRACKET
+            ;
 
-/*
-This section is for if statements
-*/
-
-ifstmt       : IF_KEYWORD logical_expr SCOPE_BEGINING body SCOPE_END body
-             | IF_KEYWORD logical_expr SCOPE_BEGINING body SCOPE_END ELSE_KEYWORD ifstmt
-             ;
-
-
-logical_expr : OPEN_BRACKET logical_expr CLOSED_BRACKET
-             | math_expr LOGICAL_EQUAL logical_expr
-             | math_expr NOT_EQUAL logical_expr
-             | math_expr LOGICAL_AND logical_expr
-             | math_expr LOGICAL_OR logical_expr
-             | math_expr GREATER_THAN_EQUAL logical_expr
-             | math_expr LESS_THAN_EQUAL logical_expr
-             | math_expr GREATER_THAN logical_expr
-             | math_expr LESS_THAN logical_expr
-             | BITWISE_NOT logical_expr
-             | BOOLEAN
-             | INT LOGICAL_EQUAL INT
-             | STRING LOGICAL_EQUAL STRING
-             | FLOAT LOGICAL_EQUAL FLOAT
-             | VARIABLE LOGICAL_EQUAL VARIABLE
-             ;
-
-/*
-This section is for while statements
-*/
-whilestmt : WHILE_KEYWORD '(' logical_expr ')' SCOPE_BEGINING body SCOPE_END
+condition : expr LOGICAL_AND expr
+          | expr LOGICAL_EQUAL expr
+          | expr LOGICAL_OR expr
+          | BITWISE_NOT expr
+          | expr NOT_EQUAL expr
+          | VARIABLE
+          | BOOLEAN
           ;
 
-
-/*
-This section is for for statements
-*/
-forloop : FOR_KEYWORD '(' assignment SEMI_COLON logical_expr SEMI_COLON math_expr ')'
+unioperatorexpression : 
+          VARIABLE PLUS_EQUAL expr
+        | VARIABLE MINUS_EQUAL expr
         ;
+
+body    : assignment body {printf("ACCEPTED");}
+        | declaration body
+        | ifstmt body
+        |
+        ;
+
+
 
 %%
 #include"../lexer/lex.yy.c"

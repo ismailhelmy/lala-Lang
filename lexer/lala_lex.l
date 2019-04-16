@@ -23,14 +23,15 @@ bool|booléen|booleano                 { return BOOLEAN_KEYWORD; }
 =|equal|égal|pari                     { return EQUAL; }
 \*\*|pow|puis|potere                  { return POWER; }
 \*|multiplier|multiply|moltiplicare   { return MULTIPLY; }
+"%"                                   { return MODULU; }
 
 \^                                    { return BITWISE_XOR; }
 &                                     { return BITWISE_AND; }
 \|                                    { return BITWISE_OR; }
 not|ne|non                            { return BITWISE_NOT; }
 
-and|et|con                            { return LOGICAL_AND; }
-or|ou|ovvero                          { return LOGICAL_OR; }
+"and"|"et"|"con"                            { return LOGICAL_AND; }
+"or"|"ou"|"ovvero"                          { return LOGICAL_OR; }
 ==|égal\?|pari\?                      { return LOGICAL_EQUAL; }
 !=|neqal\?|nonpari\?                  { return NOT_EQUAL; }
 
@@ -57,6 +58,9 @@ import|importer|importare             { return IMPORT_KEYWORD; }
 \".*\"                                { yylval.valueString = strdup(yytext); return STRING; }
 [a-z_][a-zA-Z0-9]*                    { yylval.variableName = strdup(yytext); return VARIABLE; }
 true|false|vrai|faux|vero|falso       { return BOOLEAN; }
+
+Epilogue|"A hint of a tear in both"   { return END; }
+WINTER|"Another day of sun"           { return START; }
 
 \n                                    { mylineno++; }
 [ \t\r\v\f]+                          { ; }
