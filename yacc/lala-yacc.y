@@ -30,9 +30,6 @@
 
 
 %%
-/*
-* int | float -> num
-*/
 
 /*
 This section is for the body declaration
@@ -46,10 +43,12 @@ num     : num INT {printf("ACCEPTED");}
         | num FLOAT 
         | INT 
         | FLOAT 
+        | math_expr
         ;
 body    : assignment body {printf("ACCEPTED");}
         | assignment
         | ifstmt body
+        | ifstmt
         ;
 
 /* 
@@ -69,18 +68,18 @@ assignment  : INT_KEYWORD VARIABLE EQUAL INT SEMI_COLON
 math_expr   : VARIABLE 
             | num
             | math_expr SUBTRACT math_expr
-            | math_expr ADD math_expr
-            | math_expr DIVIDE math_expr 
-            | math_expr MULTIPLY math_expr
-            | math_expr MODOLU math_expr
+            | VARIABLE ADD math_expr
+            | VARIABLE DIVIDE math_expr 
+            | VARIABLE MULTIPLY math_expr
+            | VARIABLE MODOLU math_expr
             | OPEN_BRACKET math_expr CLOSED_BRACKET
 
 /*
 This section is for if statements
 */
 
-ifstmt       : IF_KEYWORD logical_expr SCOPE_BEGINING body SCOPE_END
-             | IF_KEYWORD logical_expr SCOPE_BEGINING body SCOPE_END ELSE_KEYWORD SCOPE_BEGINING SCOPE_END
+ifstmt       : IF_KEYWORD logical_expr SCOPE_BEGINING body SCOPE_END body
+             | IF_KEYWORD logical_expr SCOPE_BEGINING body SCOPE_END ELSE_KEYWORD ifstmt
              ;
 
 
@@ -98,6 +97,7 @@ logical_expr : OPEN_BRACKET logical_expr CLOSED_BRACKET
              | INT LOGICAL_EQUAL INT
              | STRING LOGICAL_EQUAL STRING
              | FLOAT LOGICAL_EQUAL FLOAT
+             | VARIABLE LOGICAL_EQUAL VARIABLE
              ;
 
 /*
