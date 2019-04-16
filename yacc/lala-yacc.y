@@ -86,6 +86,10 @@ condition : expr LOGICAL_AND expr
           | expr LOGICAL_OR expr
           | BITWISE_NOT expr
           | expr NOT_EQUAL expr
+          | expr LESS_THAN expr
+          | expr LESS_THAN_EQUAL expr
+          | expr GREATER_THAN expr
+          | expr GREATER_THAN_EQUAL expr
           | VARIABLE
           | BOOLEAN
           ;
