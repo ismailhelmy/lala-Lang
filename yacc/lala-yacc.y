@@ -56,6 +56,7 @@ keyword     : FLOAT_KEYWORD
 declaration : keyword VARIABLE SEMI_COLON;
 
 assignment  : VARIABLE EQUAL expr SEMI_COLON
+            | keyword VARIABLE EQUAL expr SEMI_COLON
             ;
 
 ifstmt :    IF_KEYWORD OPEN_BRACKET condition CLOSED_BRACKET SCOPE_BEGINING body SCOPE_END
