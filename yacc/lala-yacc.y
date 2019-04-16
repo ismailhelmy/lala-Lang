@@ -60,6 +60,12 @@ assignment  : VARIABLE EQUAL expr SEMI_COLON
 
 ifstmt :    IF_KEYWORD OPEN_BRACKET condition CLOSED_BRACKET SCOPE_BEGINING body SCOPE_END
        ;
+
+whileloop   : WHILE_KEYWORD OPEN_BRACKET condition CLOSED_BRACKET SCOPE_BEGINING body SCOPE_END
+            ;
+
+forloop : FOR_KEYWORD OPEN_BRACKET assignment SEMI_COLON condition SEMI_COLON expr CLOSED_BRACKET SCOPE_BEGINING body SCOPE_END 
+        ;
        
 expr    : unioperatorexpression
             | expr MULTIPLY expr
@@ -91,6 +97,8 @@ unioperatorexpression :
 body    : assignment body {printf("ACCEPTED");}
         | declaration body
         | ifstmt body
+        | whileloop body
+        | forloop body
         |
         ;
 
