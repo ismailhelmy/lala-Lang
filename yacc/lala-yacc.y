@@ -31,7 +31,6 @@
 %right LOGICAL_AND LOGICAL_EQUAL LOGICAL_OR NOT_EQUAL BITWISE_AND BITWISE_XOR BITWISE_OR
 %nonassoc PLUS_EQUAL MINUS_EQUAL BITWISE_NOT
 
-
 %%
 
 /*
@@ -54,12 +53,12 @@ keyword     : FLOAT_KEYWORD
             | BOOLEAN_KEYWORD
             ;
 
-declaration : keyword VARIABLE SEMI_COLON
-            | OPEN_SQUARE ENTER VARIABLE WITH keyword CLOSED_SQUARE
+declaration : keyword VARIABLE SEMI_COLON { printf("A variable with the name : %s declared using c style.\n", $2);}
+            | OPEN_SQUARE ENTER VARIABLE WITH keyword CLOSED_SQUARE { printf("A variable with the name : %s declared using LA LA style.\n", $3);}
             ;
 
-assignment  : VARIABLE EQUAL expr SEMI_COLON
-            | keyword VARIABLE EQUAL expr SEMI_COLON
+assignment  : VARIABLE EQUAL expr SEMI_COLON { printf("A variable with the name is assigned value\n");}
+            | keyword VARIABLE EQUAL expr SEMI_COLON 
             ;
 
 ifstmt :    IF_KEYWORD OPEN_BRACKET condition CLOSED_BRACKET SCOPE_BEGINING body SCOPE_END
