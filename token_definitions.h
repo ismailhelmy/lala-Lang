@@ -41,3 +41,7 @@
 #define ELSE_KEYWORD 41
 #define END 42
 #define START 43
+#define ENTER 44
+#define OPEN_SQUARE 45
+#define CLOSED_SQUARE 46
+#define WITH 47

@@ -22,6 +22,7 @@
 %token START END INT_KEYWORD STRING_KEYWORD BOOLEAN_KEYWORD FLOAT_KEYWORD ADD SUBTRACT MULTIPLY DIVIDE POWER BITWISE_XOR BITWISE_AND BITWISE_OR BITWISE_NOT LOGICAL_EQUAL NOT_EQUAL LOGICAL_AND LOGICAL_OR EQUAL
 %token WHILE_KEYWORD IF_KEYWORD ELSE_KEYWORD FOR_KEYWORD LESS_THAN LESS_THAN_EQUAL GREATER_THAN GREATER_THAN_EQUAL SEMI_COLON MODOLU PLUS_EQUAL MINUS_EQUAL IMPORT_KEYWORD COMMA OPEN_BRACKET CLOSED_BRACKET SCOPE_BEGINING SCOPE_END
 %token MODULU
+%token ENTER OPEN_SQUARE CLOSED_SQUARE WITH
 %right SUBTRACT
 %left ADD
 %left MULTIPLY
@@ -53,7 +54,9 @@ keyword     : FLOAT_KEYWORD
             | BOOLEAN_KEYWORD
             ;
 
-declaration : keyword VARIABLE SEMI_COLON;
+declaration : keyword VARIABLE SEMI_COLON
+            | OPEN_SQUARE ENTER VARIABLE WITH keyword CLOSED_SQUARE
+            ;
 
 assignment  : VARIABLE EQUAL expr SEMI_COLON
             | keyword VARIABLE EQUAL expr SEMI_COLON
@@ -65,11 +68,11 @@ ifstmt :    IF_KEYWORD OPEN_BRACKET condition CLOSED_BRACKET SCOPE_BEGINING body
 whileloop   : WHILE_KEYWORD OPEN_BRACKET condition CLOSED_BRACKET SCOPE_BEGINING body SCOPE_END
             ;
 
-forloop : FOR_KEYWORD OPEN_BRACKET assignment SEMI_COLON condition SEMI_COLON expr CLOSED_BRACKET SCOPE_BEGINING body SCOPE_END 
+forloop : FOR_KEYWORD OPEN_BRACKET assignment condition SEMI_COLON expr SEMI_COLON CLOSED_BRACKET SCOPE_BEGINING body SCOPE_END 
         ;
        
 expr    : unioperatorexpression
-            | expr MULTIPLY expr
+            | expr MULTIPLY expr 
             | expr DIVIDE expr
             | num
             | expr ADD expr
@@ -90,8 +93,6 @@ condition : expr LOGICAL_AND expr
           | expr LESS_THAN_EQUAL expr
           | expr GREATER_THAN expr
           | expr GREATER_THAN_EQUAL expr
-          | VARIABLE
-          | BOOLEAN
           ;
 
 unioperatorexpression : 

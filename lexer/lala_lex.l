@@ -42,6 +42,8 @@ for|pendant|per                       { return FOR_KEYWORD; }
 import|importer|importare             { return IMPORT_KEYWORD; }
 
 ","                                   { return COMMA; }
+"["                                   { return OPEN_SQUARE; }
+"]"                                   { return CLOSED_SQUARE; }
 "{"                                   { return SCOPE_BEGINING; }
 "}"                                   { return SCOPE_END; }
 ">="                                  { return GREATER_THAN_EQUAL; }
@@ -61,6 +63,8 @@ true|false|vrai|faux|vero|falso       { return BOOLEAN; }
 
 Epilogue|"A hint of a tear in both"   { return END; }
 WINTER|"Another day of sun"           { return START; }
+ENTER                                 { return ENTER; }
+WITH                                  { return WITH; }
 
 \n                                    { mylineno++; }
 [ \t\r\v\f]+                          { ; }
