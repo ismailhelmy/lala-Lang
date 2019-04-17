@@ -56,10 +56,17 @@ keyword     : FLOAT_KEYWORD
 declaration : keyword VARIABLE SEMI_COLON;
 
 assignment  : VARIABLE EQUAL expr SEMI_COLON
+            | keyword VARIABLE EQUAL expr SEMI_COLON
             ;
 
 ifstmt :    IF_KEYWORD OPEN_BRACKET condition CLOSED_BRACKET SCOPE_BEGINING body SCOPE_END
        ;
+
+whileloop   : WHILE_KEYWORD OPEN_BRACKET condition CLOSED_BRACKET SCOPE_BEGINING body SCOPE_END
+            ;
+
+forloop : FOR_KEYWORD OPEN_BRACKET assignment SEMI_COLON condition SEMI_COLON expr CLOSED_BRACKET SCOPE_BEGINING body SCOPE_END 
+        ;
        
 expr    : unioperatorexpression
             | expr MULTIPLY expr
@@ -79,6 +86,10 @@ condition : expr LOGICAL_AND expr
           | expr LOGICAL_OR expr
           | BITWISE_NOT expr
           | expr NOT_EQUAL expr
+          | expr LESS_THAN expr
+          | expr LESS_THAN_EQUAL expr
+          | expr GREATER_THAN expr
+          | expr GREATER_THAN_EQUAL expr
           | VARIABLE
           | BOOLEAN
           ;
@@ -91,6 +102,8 @@ unioperatorexpression :
 body    : assignment body {printf("ACCEPTED");}
         | declaration body
         | ifstmt body
+        | whileloop body
+        | forloop body
         |
         ;
 

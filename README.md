@@ -1,2 +1,2 @@
-# lala-Lang
-This is the only official open source repository for the lala programming language. All rights reserved 2019
+# LA LA Lang
+This is the only source repository for the LA LA Programming Language. All rights reserved 2019
