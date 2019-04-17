@@ -3,3 +3,4 @@ lexer/lex.yy.c
 yacc/lala-yacc.tab.c
 yacc/lala-yacc.tab.h
 yacc/sample.exe
+yacc/lala-yacc.output
