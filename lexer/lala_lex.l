@@ -42,9 +42,12 @@ for|pendant|per                       { return FOR_KEYWORD; }
 import|importer|importare             { return IMPORT_KEYWORD; }
 
 const                                 { return CONST_KEYWORD; }
-true|false|vrai|faux|vero|falso       { return BOOLEAN; }
 switch                                { return SWITCH_KEYWORD; }
 case                                  { return CASE_KEYWORD; }
+"else if"                             { return ELSEIF_KEYWORD; }
+
+true|false|vrai|faux|vero|falso       { return BOOLEAN; }
+
 ","                                   { return COMMA; }
 ":"                                   { return COLON; }
 "["                                   { return OPEN_SQUARE; }

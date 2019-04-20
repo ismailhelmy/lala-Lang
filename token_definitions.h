@@ -51,3 +51,4 @@
 #define CASE_KEYWORD 51
 #define BREAK_KEYWORD 52
 #define COLON 53
+#define ELSEIF_KEYWORD 54
