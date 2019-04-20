@@ -11,7 +11,7 @@
 %option nounput yylineno
 
 %%
-
+\/\*.*\*\/                              { return COMMENT; }
 int|entier|intero                     { return INT_KEYWORD; }
 float|flotte|flutter                  { return FLOAT_KEYWORD; }
 string|chaîne|stringa                 { return STRING_KEYWORD; }

@@ -45,3 +45,4 @@
 #define OPEN_SQUARE 45
 #define CLOSED_SQUARE 46
 #define WITH 47
+#define COMMENT 48
