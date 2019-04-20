@@ -52,26 +52,36 @@ value : num
         | BOOLEAN
         ;
 
-keyword     : FLOAT_KEYWORD
+typekeyword : FLOAT_KEYWORD
             | INT_KEYWORD
             | STRING_KEYWORD
             | BOOLEAN_KEYWORD
             ;
 
-declaration : keyword VARIABLE SEMI_COLON { printf("A variable with the name : %s declared using c style.\n", $2);}
-            | OPEN_SQUARE ENTER VARIABLE WITH keyword CLOSED_SQUARE { printf("A variable with the name : %s declared using LA LA style.\n", $3);}
+declaration : typekeyword VARIABLE SEMI_COLON { printf("A variable with the name : %s declared using c style.\n", $2);}
+            | OPEN_SQUARE ENTER VARIABLE WITH typekeyword CLOSED_SQUARE { printf("A variable with the name : %s declared using LA LA style.\n", $3);}
             | constdeclaration
             ;
 
 assignment  : VARIABLE EQUAL expr SEMI_COLON { printf("A variable with the name : %s is assigned value\n",$1);}
-            | keyword VARIABLE EQUAL expr SEMI_COLON { printf("A variable with the name : %s is assigned value of an expression\n",$2);}
+            | typekeyword VARIABLE EQUAL expr SEMI_COLON { printf("A variable with the name : %s is assigned value of an expression\n",$2);}
             ;
 
-constdeclaration : CONST_KEYWORD keyword VARIABLE EQUAL value SEMI_COLON
+constdeclaration : CONST_KEYWORD typekeyword VARIABLE EQUAL value SEMI_COLON
             ;
 
 ifstmt :    IF_KEYWORD OPEN_BRACKET condition CLOSED_BRACKET SCOPE_BEGINING body SCOPE_END elseifstmt elsestmt { printf("An if condition was declared right here.");}
        ;
+
+functiondeclaration : typekeyword VARIABLE OPEN_BRACKET paramterlist CLOSED_BRACKET SEMI_COLON
+
+functiondefinition : typekeyword VARIABLE OPEN_BRACKET paramterlist CLOSED_BRACKET SCOPE_BEGINING body SCOPE_END
+        ;
+
+paramterlist : typekeyword VARIABLE paramterlist
+            | COMMA typekeyword VARIABLE paramterlist
+            |
+            ;
 
 elseifstmt : ELSEIF_KEYWORD OPEN_BRACKET condition CLOSED_BRACKET SCOPE_BEGINING body SCOPE_END elseifstmt
             |
@@ -90,16 +100,19 @@ switchstmt : SWITCH_KEYWORD OPEN_BRACKET VARIABLE CLOSED_BRACKET SCOPE_BEGINING 
         ;
 
 whileloop   : WHILE_KEYWORD OPEN_BRACKET condition CLOSED_BRACKET SCOPE_BEGINING body SCOPE_END 
-{ printf("An While loop was declared right here.");}
+{ printf("A While loop was declared right here.");}
   
             ;
 
-forloop : FOR_KEYWORD OPEN_BRACKET assignment condition SEMI_COLON expr SEMI_COLON CLOSED_BRACKET SCOPE_BEGINING body SCOPE_END 
-{ printf("An For Loop was declared right here.");}
+forloop : FOR_KEYWORD OPEN_BRACKET assignment condition SEMI_COLON iteratoroperation CLOSED_BRACKET SCOPE_BEGINING body SCOPE_END 
+ { printf("A For Loop was declared right here.");}
      ;
+
+iteratoroperation : VARIABLE EQUAL expr
+                | unioperatorexpression
+                ;
        
-expr    : unioperatorexpression
-            | expr MULTIPLY expr 
+expr    : expr MULTIPLY expr 
             | expr DIVIDE expr
             | num
             | expr ADD expr
@@ -134,6 +147,9 @@ body    : assignment body {printf("ACCEPTED");}
         | forloop body
         | comment body
         | switchstmt body
+        | functiondeclaration body
+        | functiondefinition body
+        | unioperatorexpression SEMI_COLON body
         |
         ;
 comment : COMMENT 
