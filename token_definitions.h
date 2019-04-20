@@ -46,3 +46,8 @@
 #define CLOSED_SQUARE 46
 #define WITH 47
 #define COMMENT 48
+#define CONST_KEYWORD 49
+#define SWITCH_KEYWORD 50
+#define CASE_KEYWORD 51
+#define BREAK_KEYWORD 52
+#define COLON 53

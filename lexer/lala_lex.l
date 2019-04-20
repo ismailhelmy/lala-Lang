@@ -41,7 +41,12 @@ while|quoique|sebbene                 { return WHILE_KEYWORD; }
 for|pendant|per                       { return FOR_KEYWORD; }
 import|importer|importare             { return IMPORT_KEYWORD; }
 
+const                                 { return CONST_KEYWORD; }
+true|false|vrai|faux|vero|falso       { return BOOLEAN; }
+switch                                { return SWITCH_KEYWORD; }
+case                                  { return CASE_KEYWORD; }
 ","                                   { return COMMA; }
+":"                                   { return COLON; }
 "["                                   { return OPEN_SQUARE; }
 "]"                                   { return CLOSED_SQUARE; }
 "{"                                   { return SCOPE_BEGINING; }
@@ -59,12 +64,13 @@ import|importer|importare             { return IMPORT_KEYWORD; }
 (-)?[0-9]*\.?[0-9]+                   { yylval.valueFloat = atof(yytext); return FLOAT;}
 \".*\"                                { yylval.valueString = strdup(yytext); return STRING; }
 [a-z_][a-zA-Z0-9]*                    { yylval.variableName = strdup(yytext); return VARIABLE; }
-true|false|vrai|faux|vero|falso       { return BOOLEAN; }
+
 
 Epilogue|"A hint of a tear in both"   { return END; }
 WINTER|"Another day of sun"           { return START; }
 ENTER                                 { return ENTER; }
 WITH                                  { return WITH; }
+
 
 \n                                    { mylineno++; }
 [ \t\r\v\f]+                          { ; }
