@@ -6,3 +6,4 @@ yacc/lala-yacc.tab.h
 yacc/lala-yacc.output
 
 *.exe
+*.out
