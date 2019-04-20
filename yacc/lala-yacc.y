@@ -57,18 +57,21 @@ declaration : keyword VARIABLE SEMI_COLON { printf("A variable with the name : %
             | OPEN_SQUARE ENTER VARIABLE WITH keyword CLOSED_SQUARE { printf("A variable with the name : %s declared using LA LA style.\n", $3);}
             ;
 
-assignment  : VARIABLE EQUAL expr SEMI_COLON { printf("A variable with the name is assigned value\n");}
-            | keyword VARIABLE EQUAL expr SEMI_COLON 
+assignment  : VARIABLE EQUAL expr SEMI_COLON { printf("A variable with the name : %s is assigned value\n",$1);}
+            | keyword VARIABLE EQUAL expr SEMI_COLON { printf("A variable with the name : %s is assigned value of an expression\n",$2);}
             ;
 
-ifstmt :    IF_KEYWORD OPEN_BRACKET condition CLOSED_BRACKET SCOPE_BEGINING body SCOPE_END
+ifstmt :    IF_KEYWORD OPEN_BRACKET condition CLOSED_BRACKET SCOPE_BEGINING body SCOPE_END { printf("An if condition was declared right here.");}
        ;
 
-whileloop   : WHILE_KEYWORD OPEN_BRACKET condition CLOSED_BRACKET SCOPE_BEGINING body SCOPE_END
+whileloop   : WHILE_KEYWORD OPEN_BRACKET condition CLOSED_BRACKET SCOPE_BEGINING body SCOPE_END 
+{ printf("An While loop was declared right here.");}
+  
             ;
 
 forloop : FOR_KEYWORD OPEN_BRACKET assignment condition SEMI_COLON expr SEMI_COLON CLOSED_BRACKET SCOPE_BEGINING body SCOPE_END 
-        ;
+{ printf("An For Loop was declared right here.");}
+     ;
        
 expr    : unioperatorexpression
             | expr MULTIPLY expr 
