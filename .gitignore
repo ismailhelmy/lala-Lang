@@ -1,7 +1,7 @@
 .vscode/
-lexer/lex.yy.c
-yacc/lala-yacc.tab.c
-yacc/lala-yacc.tab.h
+lex.yy.c
+lala-yacc.tab.c
+lala-yacc.tab.h
 
 yacc/lala-yacc.output
 
