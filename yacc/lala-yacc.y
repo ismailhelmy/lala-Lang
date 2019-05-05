@@ -37,11 +37,11 @@
 This section is for the body declaration
 */
 
-start   : START body END {printf("ACCEPTED");}
+start   : START body END /*{printf("ACCEPTED");}*/
         ;
 
 
-num     : num INT {printf("ACCEPTED");}
+num     : num INT /*{printf("ACCEPTED");}*/
         | num FLOAT 
         | INT 
         | FLOAT
@@ -100,7 +100,7 @@ switchstmt : SWITCH_KEYWORD OPEN_BRACKET VARIABLE CLOSED_BRACKET SCOPE_BEGINING 
         ;
 
 whileloop   : WHILE_KEYWORD OPEN_BRACKET condition CLOSED_BRACKET SCOPE_BEGINING body SCOPE_END 
-{ printf("A While loop was declared right here.");}
+{ printf("A While loop was declared right here.\n");}
   
             ;
 
@@ -122,6 +122,7 @@ expr    : expr MULTIPLY expr
             | expr LOGICAL_AND expr
             | expr LOGICAL_EQUAL expr
             | OPEN_BRACKET expr CLOSED_BRACKET
+            | STRING
             ;
 
 condition : expr LOGICAL_AND expr
@@ -140,7 +141,7 @@ unioperatorexpression :
         | VARIABLE MINUS_EQUAL expr
         ;
 
-body    : assignment body {printf("ACCEPTED");}
+body    : assignment body /*{printf("ACCEPTED");}*/
         | declaration body
         | ifstmt body
         | whileloop body
