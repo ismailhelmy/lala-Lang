@@ -4,7 +4,7 @@
 
 int getHash(char* variableName)
 {
-    // make an ascii sum of the string.
+    // make an ascii sum of  the string.
     int sum = 0;
     for(int i = 0; i < strlen(variableName); i++)
     {
