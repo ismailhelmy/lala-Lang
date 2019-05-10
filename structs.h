@@ -1,3 +1,8 @@
+#ifndef _STRUCTS_H_
+#define _STRUCTS_H_
+
+#include <stdio.h>
+
 typedef enum { typeCon, typeId, typeOpr } nodeEnum;
 
 /* constants */
@@ -40,3 +45,5 @@ extern int symInit[26];
 extern int symBraces[26]; 
 extern FILE* yyin;
 extern FILE* yyout;
+
+#endif

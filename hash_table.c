@@ -1,41 +1,6 @@
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include"structs.h"
+#include "hash_table.h"
 
-// Pretty much any prime number is okay for the chain value
-// Also the chain has to be greater than 50
-#define CHAIN 53
 
-union Value{
-    int valueInt;
-    float valueFloat;
-    char* valueString;
-    char* variableName;
-    int valueBool;
-    nodeType* nPtr;
-    
-};
-
-typedef union Value Value;
-
-struct symbol{
-    Value value;
-    char* variableName;
-    char* type;
-    int scope;
-    struct symbol* next;
-    int isConstant; // 0 for variables, and 1 for constants
-}*block[CHAIN];
-
-typedef struct symbol symbol;
-
-struct node {
-    char* key;
-    symbol* value;
-
-    struct node * next;
-} *table[CHAIN];
 
 int getHash(char* variableName)
 {

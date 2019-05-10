@@ -1,0 +1,25 @@
+WINTER
+/* add break and default*/
+
+/* add break within loops */
+
+/* add void keyword*/
+int x = 5;
+[ENTER y WITH int]
+if (x == 5 and y == 5)
+{
+    while(not h)
+    {
+        x = 7;
+    }
+} 
+
+int badawy();
+
+float badawy() {
+    int helmy = 5;
+}
+
+
+
+Epilogue
