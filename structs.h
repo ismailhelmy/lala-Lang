@@ -38,12 +38,12 @@ typedef struct nodeTypeTag {
 } nodeType;
 
 //extern char* symValue[26];
-extern char* symId[26];
-extern int symType[26];
-extern int symUsed[26];
-extern int symInit[26];
-extern int symBraces[26]; 
-extern FILE* yyin;
-extern FILE* yyout;
+ char* symId[26];
+ int symType[26];
+ int symUsed[26];
+ int symInit[26];
+ int symBraces[26]; 
+ FILE* yyin;
+ FILE* yyout;
 
 #endif
