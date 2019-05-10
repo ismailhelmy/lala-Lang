@@ -1,0 +1,19 @@
+WINTER
+
+int x = 5;
+int y;
+
+float z = 2.0;
+string r;
+r = "eda fe eh";
+
+int getMe(int y, string q);
+
+int getMe(int y, string q) {
+    while(y != 0) {
+        y -= 1;
+    }
+    q = "really!";
+}
+
+Epilogue
