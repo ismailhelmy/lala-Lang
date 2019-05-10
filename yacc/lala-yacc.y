@@ -38,7 +38,7 @@
 %right LOGICAL_AND LOGICAL_EQUAL LOGICAL_OR NOT_EQUAL BITWISE_AND BITWISE_XOR BITWISE_OR
 %nonassoc PLUS_EQUAL MINUS_EQUAL BITWISE_NOT
 
-%type <nPtr> expr num
+%type <nPtr> expr num unioperatorexpression body
 
 %%
 
@@ -52,8 +52,7 @@ start   : START body END /*{printf("ACCEPTED");}*/
         ;
 
 
-num     : INT 
-        | FLOAT
+num     : INT | FLOAT
         ;
 
 value : num
@@ -146,8 +145,8 @@ condition : expr LOGICAL_AND expr
           ;
 
 unioperatorexpression : 
-          VARIABLE PLUS_EQUAL expr
-        | VARIABLE MINUS_EQUAL expr
+          VARIABLE PLUS_EQUAL expr{$$ = opr(PLUS_EQUAL,2,getid($1),$3);}
+        | VARIABLE MINUS_EQUAL expr{$$=opr(MINUS_EQUAL,2,getid($1),$3);}
         ;
 
 body    : assignment body /*{printf("ACCEPTED");}*/
@@ -155,12 +154,12 @@ body    : assignment body /*{printf("ACCEPTED");}*/
         | ifstmt body
         | whileloop body
         | forloop body
-        | comment body
+        | comment body{$$ = $2;}
         | switchstmt body
         | functiondeclaration body
         | functiondefinition body
         | unioperatorexpression SEMI_COLON body
-        |
+        |{$$ = NULL;}
         ;
 comment : COMMENT 
         ;
