@@ -1,0 +1,13 @@
+----------- Quadruples defintion and description
+
+LOAD V1, V2
+MUL
+ADD
+SUB
+STORE
+JMP
+INC
+DEC
+PUSH
+POP
+JZ
