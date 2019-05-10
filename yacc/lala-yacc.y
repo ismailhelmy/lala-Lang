@@ -23,13 +23,15 @@
 %token ELSEIF_KEYWORD COLON CONST_KEYWORD BREAK_KEYWORD CASE_KEYWORD SWITCH_KEYWORD COMMENT WHILE_KEYWORD IF_KEYWORD ELSE_KEYWORD FOR_KEYWORD LESS_THAN LESS_THAN_EQUAL GREATER_THAN GREATER_THAN_EQUAL SEMI_COLON MODOLU PLUS_EQUAL MINUS_EQUAL IMPORT_KEYWORD COMMA OPEN_BRACKET CLOSED_BRACKET SCOPE_BEGINING SCOPE_END
 %token MODULU
 %token ENTER OPEN_SQUARE CLOSED_SQUARE WITH
-%right SUBTRACT
-%left ADD
+%right EQUAL
+%left SUBTRACT ADD
 %left MULTIPLY
 %right DIVIDE
 %right MODOLU
 %right LOGICAL_AND LOGICAL_EQUAL LOGICAL_OR NOT_EQUAL BITWISE_AND BITWISE_XOR BITWISE_OR
 %nonassoc PLUS_EQUAL MINUS_EQUAL BITWISE_NOT
+
+%type <valueInt> expr num
 
 %%
 
@@ -64,7 +66,7 @@ declaration : typekeyword VARIABLE SEMI_COLON { printf("A variable with the name
             ;
 
 assignment  : VARIABLE EQUAL expr SEMI_COLON { printf("A variable with the name : %s is assigned value\n",$1);}
-            | typekeyword VARIABLE EQUAL expr SEMI_COLON { printf("A variable with the name : %s is assigned value of an expression\n",$2);}
+            | typekeyword VARIABLE EQUAL expr SEMI_COLON { printf("A variable with the name : %s is assigned value of an expression : %d\n",$2, $4);}
             ;
 
 constdeclaration : CONST_KEYWORD typekeyword VARIABLE EQUAL value SEMI_COLON
@@ -112,17 +114,17 @@ iteratoroperation : VARIABLE EQUAL expr
                 | unioperatorexpression
                 ;
        
-expr    : expr MULTIPLY expr 
-            | expr DIVIDE expr
-            | num
-            | expr ADD expr
-            | expr SUBTRACT expr
-            | VARIABLE
-            | BOOLEAN
-            | expr LOGICAL_AND expr
-            | expr LOGICAL_EQUAL expr
-            | OPEN_BRACKET expr CLOSED_BRACKET
-            | STRING
+expr    : expr MULTIPLY expr { $$ = $1 * $3; }
+            | expr DIVIDE expr { $$ = $1 / $3; }
+            | num { $$ = $1; }
+            | expr ADD expr { $$ = $1 + $3; }
+            | expr SUBTRACT expr { $$ = $1 - $3; }
+            | VARIABLE { $$ = $1; }
+            | BOOLEAN { $$ = $1; }
+            | expr LOGICAL_AND expr { $$ = $1 & $3; }
+            | expr LOGICAL_EQUAL expr { $$ = $1 == $3; }
+            | OPEN_BRACKET expr CLOSED_BRACKET { $$ = ($2); }
+            | STRING { $$ = $1; }
             ;
 
 condition : expr LOGICAL_AND expr
