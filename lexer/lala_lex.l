@@ -8,8 +8,6 @@
    int mylineno = 1;
 %}
 
-%option nounput yylineno
-
 %%
 \/\*.*\*\/                              { return COMMENT; }
 int|entier|intero                     { return INT_KEYWORD; }

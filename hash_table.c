@@ -22,7 +22,7 @@ int searchSymbol(symbol * searchKey)
     struct node* predictedNode = table[predictedIndex];
 
     while(predictedNode != NULL){
-        if(strcmp(predictedNode->key, searchKey->variableName) && predictedNode->value->scope == searchKey->scope)
+        if(strcmp(predictedNode->key, searchKey->variableName) && predictedNode->value->scopeId == searchKey->scopeId)
         {
             // We found it.
             return 1;
@@ -163,58 +163,58 @@ symbol* createSymbol(char * name, char* type, Value value, int scope, int isCons
     strcpy(mysymbol->variableName, name);
     mysymbol->type = malloc(strlen(type));
     strcpy(mysymbol->type, type);
-    mysymbol->scope = scope;
+    mysymbol->scopeId = scope;
     mysymbol->value = value;
     mysymbol->isConstant = isConstant;
 
     return mysymbol;
 }
 
-// void main(void)
-// {
-//     char* name = "value";
-//     symbol * mysymbol = malloc(sizeof(symbol));
-//     mysymbol->variableName = malloc(strlen(name));
-//     strcpy(mysymbol->variableName, name);
-//     mysymbol->value.valueInt = 5;
-//     mysymbol->scope = 1;
-//     mysymbol->type = "int";
-//     int hey = insertSymbol(mysymbol);
-//     if(hey == 1)
-//     {
-//         printf("We have inserted that symbol perfectly, cool %d\n", 0);
-//     }
-//     int isFound;
-//     mysymbol = findSymbol(name, &isFound);
-//     if(isFound)
-//     {
-//         printf("Found the symbol with name %s, with value: %d\n", name, mysymbol->value.valueInt);
-//     }
-//     //printTable();
+void main(void)
+{
+    char* name = "value";
+    symbol * mysymbol = malloc(sizeof(symbol));
+    mysymbol->variableName = malloc(strlen(name));
+    strcpy(mysymbol->variableName, name);
+    mysymbol->value.valueInt = 5;
+    mysymbol->scopeId = 1;
+    mysymbol->type = "int";
+    int hey = insertSymbol(mysymbol);
+    if(hey == 1)
+    {
+        printf("We have inserted that symbol perfectly, cool %d\n", 0);
+    }
+    int isFound;
+    mysymbol = findSymbol(name, &isFound);
+    if(isFound)
+    {
+        printf("Found the symbol with name %s, with value: %d\n", name, mysymbol->value.valueInt);
+    }
+    //printTable();
 
-//     Value val;
-//     val.valueFloat = 10.5f;
-//     symbol * secondSymbol = createSymbol("ismail", "float", val, 0, 1);
+    Value val;
+    val.valueFloat = 10.5f;
+    symbol * secondSymbol = createSymbol("ismail", "float", val, 0, 1);
 
-//     val.valueBool = 0;
-//     symbol * thirdSymbol = createSymbol("isFound" , "boolean", val, 2, 1);
+    val.valueBool = 0;
+    symbol * thirdSymbol = createSymbol("isFound" , "boolean", val, 2, 1);
 
-//     int insert = insertSymbol(secondSymbol);
-//     insertSymbol(thirdSymbol);
-//     printTable();
-//     Value newVal;
-//     newVal.valueBool = 1;
-//     updateSymbol("isFound", newVal);
-//     printf("Updated isFound to true\n");
-//     printTable();
+    int insert = insertSymbol(secondSymbol);
+    insertSymbol(thirdSymbol);
+    printTable();
+    Value newVal;
+    newVal.valueBool = 1;
+    updateSymbol("isFound", newVal);
+    printf("Updated isFound to true\n");
+    printTable();
 
-//     newVal.valueString = "ibrahim";
-//     insertSymbol(createSymbol("name", "string", newVal, 2, 0));
-//     printf("\nAdded a new string variable\n");
-//     printTable();
+    newVal.valueString = "ibrahim";
+    insertSymbol(createSymbol("name", "string", newVal, 2, 0));
+    printf("\nAdded a new string variable\n");
+    printTable();
 
-//     newVal.valueString = "ismail";
-//     updateSymbol("name", newVal);
-//     printTable();
+    newVal.valueString = "ismail";
+    updateSymbol("name", newVal);
+    printTable();
 
-// }
+}

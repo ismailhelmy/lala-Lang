@@ -1,11 +1,17 @@
 %{
-        #include <stdio.h>
-        #include "../hash_table.h"
+	#include <stdio.h>
+	#include <stdlib.h>
+	#include <string.h>
+	#include "../hash_table.h"
+	#include "../structs.h"
+	#include "../lexer/lex.yy.c"
+	#include <stdarg.h>
+	//void ftoa(float n,char res[], int afterpoint);
     nodeType *opr(int oper, int nops, ...);
 	nodeType *id(int flag, char name[], int per);
 	nodeType *getid(char name[]);
 	nodeType *con(char* s, int flag);
-	void ftoa(float n,char res[], int afterpoint);
+	int insertSymbol(symbol * newSymbol);
 	void freeNode(nodeType *p);
 	int ex(nodeType *p);
     extern int yylex();
@@ -64,7 +70,7 @@ start   : START body END /*{printf("ACCEPTED");}*/
 
 
 num     :INT { char c[] = {}; my_itoa($1, c);  $$ = con(c,0);}
-		| FLOAT { char c[] = {}; ftoa($1, c, 10);  $$ = con(c,1);}
+		| FLOAT /*{ char c[] = {}; //ftoa($1, c, 10);  $$ = con(c,1);}*/
         ;
 
 value : num {$$ = $1;}
@@ -100,7 +106,7 @@ declaration : typekeyword VARIABLE SEMI_COLON {
             ;
 
 assignment  : VARIABLE EQUAL expr SEMI_COLON  { $$ = opr(EQUAL, 2, getid($1), $3);}
-            | typekeyword VARIABLE EQUAL expr SEMI_COLON { printf("A variable with the name : %s is assigned value of an expression : %d\n",$2, $4);}
+            | typekeyword VARIABLE EQUAL expr SEMI_COLON { printf("A variable with the name : %s is assigned value of an expression\n",$2);}
             | VARIABLE EQUAL functioncall SEMI_COLON
             ;
 OpenScope   : SCOPE_BEGINING {openScope();}
@@ -197,13 +203,6 @@ comment : COMMENT
 
 
 %%
-#include"../lexer/lex.yy.c"
-#include "../hash_table.h"
-#include "../structs.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdarg.h>
-
 #define SIZEOF_NODETYPE ((char *)&p->con - (char *)p)  
 
 char *my_itoa(int num, char *str)
