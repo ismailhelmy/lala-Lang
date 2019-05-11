@@ -27,7 +27,7 @@
 %token <variableName> VARIABLE
 %token <valueBool> BOOLEAN
 %token START END INT_KEYWORD STRING_KEYWORD BOOLEAN_KEYWORD FLOAT_KEYWORD ADD SUBTRACT MULTIPLY DIVIDE POWER BITWISE_XOR BITWISE_AND BITWISE_OR BITWISE_NOT LOGICAL_EQUAL NOT_EQUAL LOGICAL_AND LOGICAL_OR EQUAL
-%token ELSEIF_KEYWORD COLON CONST_KEYWORD BREAK_KEYWORD CASE_KEYWORD SWITCH_KEYWORD COMMENT WHILE_KEYWORD IF_KEYWORD ELSE_KEYWORD FOR_KEYWORD LESS_THAN LESS_THAN_EQUAL GREATER_THAN GREATER_THAN_EQUAL SEMI_COLON MODOLU PLUS_EQUAL MINUS_EQUAL IMPORT_KEYWORD COMMA OPEN_BRACKET CLOSED_BRACKET SCOPE_BEGINING SCOPE_END
+%token ELSEIF_KEYWORD VOID_KEYWORD DEFAULT_KEYWORD COLON CONST_KEYWORD BREAK_KEYWORD CASE_KEYWORD SWITCH_KEYWORD COMMENT WHILE_KEYWORD IF_KEYWORD ELSE_KEYWORD FOR_KEYWORD LESS_THAN LESS_THAN_EQUAL GREATER_THAN GREATER_THAN_EQUAL SEMI_COLON MODOLU PLUS_EQUAL MINUS_EQUAL IMPORT_KEYWORD COMMA OPEN_BRACKET CLOSED_BRACKET SCOPE_BEGINING SCOPE_END
 %token MODULU
 %token ENTER OPEN_SQUARE CLOSED_SQUARE WITH
 %right EQUAL
@@ -73,6 +73,7 @@ declaration : typekeyword VARIABLE SEMI_COLON { printf("A variable with the name
 
 assignment  : VARIABLE EQUAL expr SEMI_COLON { printf("A variable with the name : %s is assigned value\n",$1);}
             | typekeyword VARIABLE EQUAL expr SEMI_COLON { printf("A variable with the name : %s is assigned value of an expression : %d\n",$2, $4);}
+            | VARIABLE EQUAL functioncall SEMI_COLON
             ;
 
 constdeclaration : CONST_KEYWORD typekeyword VARIABLE EQUAL value SEMI_COLON
@@ -85,6 +86,7 @@ functiondeclaration : typekeyword VARIABLE OPEN_BRACKET paramterlist CLOSED_BRAC
 
 functiondefinition : typekeyword VARIABLE OPEN_BRACKET paramterlist CLOSED_BRACKET SCOPE_BEGINING body SCOPE_END
         ;
+functioncall : VARIABLE OPEN_BRACKET paramterlist CLOSED_BRACKET
 
 paramterlist : typekeyword VARIABLE paramterlist
             | COMMA typekeyword VARIABLE paramterlist
@@ -200,7 +202,7 @@ nodeType *id(int i, int flag, char name[], int per, int brace) {
 	//while(symId[j] != NULL) {
 	for(j = 0; j < 26; j++){
 		if(symId[j] != NULL) {
-			if(strcmp(symId[j], name) == 0 ) {
+			if(strcmp(symId[j], name) == 0) {
 				p->type = typeId;     
 				p->id.i = j;
 				p->id.name = strdup(name);
