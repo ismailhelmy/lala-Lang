@@ -10,6 +10,8 @@
 	int ex(nodeType *p);
     extern int yylex();
     void yyerror(char *msg);
+    	int isLogical = 0;
+	int isDeclaration = 0 ;
 %}
 
 %union{
@@ -38,7 +40,7 @@
 %right LOGICAL_AND LOGICAL_EQUAL LOGICAL_OR NOT_EQUAL BITWISE_AND BITWISE_XOR BITWISE_OR
 %nonassoc PLUS_EQUAL MINUS_EQUAL BITWISE_NOT
 
-%type <nPtr> expr num unioperatorexpression body
+%type <nPtr> value switchbody switchstmt expr num unioperatorexpression body declaration assignment typekeyword
 
 %%
 
@@ -52,26 +54,42 @@ start   : START body END /*{printf("ACCEPTED");}*/
         ;
 
 
-num     : INT | FLOAT
+num     :INT { char c[] = {}; itoa($1, c, 10);  $$ = con(c,0);}
+		| FLOAT { char c[] = {}; ftoa($1, c, 10);  $$ = con(c,1);}
         ;
 
-value : num
-        | STRING
-        | BOOLEAN
+value : num {$$ = $1;}
+        | STRING{ $$ = con($1,3);}
+        | BOOLEAN { $$ = $1; }
         ;
 
-typekeyword : FLOAT_KEYWORD
-            | INT_KEYWORD
-            | STRING_KEYWORD
-            | BOOLEAN_KEYWORD
+typekeyword : FLOAT_KEYWORD { $$ = "float";}
+            | INT_KEYWORD	{ $$ = "int";}
+            | STRING_KEYWORD{ $$ = "string";}
+            | BOOLEAN_KEYWORD{$$ = "boolean";}
             ;
 
-declaration : typekeyword VARIABLE SEMI_COLON { printf("A variable with the name : %s declared using c style.\n", $2);}
-            | OPEN_SQUARE ENTER VARIABLE WITH typekeyword CLOSED_SQUARE { printf("A variable with the name : %s declared using LA LA style.\n", $3);}
+declaration : typekeyword VARIABLE SEMI_COLON {
+						isDeclaration = 1;
+					        if ($1 == "int" ) $$ = id( 0, $2, 0);
+								else if($1 == "float") $$ = id(1, $2, 0);
+								else if  ($1 == "char") $$ = id(2, $2, 0);
+								else if  ($1 == "string") $$ = id(3, $2, 0);
+								else if($1 == "boolean" ) $$ = id( 4, $2, 0);
+                                }
+						
+            | OPEN_SQUARE ENTER VARIABLE WITH typekeyword CLOSED_SQUARE {
+						isDeclaration = 1;
+					        if ($5 == "int" ) $$ = id( 0, $3, 0);
+								else if($5 == "float") $$ = id(1, $3, 0);
+								else if  ($5 == "char") $$ = id(2, $3, 0);
+								else if  ($5 == "string") $$ = id(3, $3, 0);
+								else if($5 == "boolean" ) $$ = id( 4, $3, 0);
+                                }
             | constdeclaration
             ;
 
-assignment  : VARIABLE EQUAL expr SEMI_COLON { printf("A variable with the name : %s is assigned value\n",$1);}
+assignment  : VARIABLE EQUAL expr SEMI_COLON  { $$ = opr(EQUAL, 2, getid($1), $3);}
             | typekeyword VARIABLE EQUAL expr SEMI_COLON { printf("A variable with the name : %s is assigned value of an expression : %d\n",$2, $4);}
             ;
 
@@ -105,7 +123,7 @@ switchbody : CASE_KEYWORD INT COLON SCOPE_BEGINING body SCOPE_END switchbody
         ;
 
 switchstmt : SWITCH_KEYWORD OPEN_BRACKET VARIABLE CLOSED_BRACKET SCOPE_BEGINING switchbody SCOPE_END
-        ;
+        {$$ = opr(SWITCH,2,getid($3),$6);};
 
 whileloop   : WHILE_KEYWORD OPEN_BRACKET condition CLOSED_BRACKET SCOPE_BEGINING body SCOPE_END 
 { printf("A While loop was declared right here.\n");}
@@ -113,8 +131,7 @@ whileloop   : WHILE_KEYWORD OPEN_BRACKET condition CLOSED_BRACKET SCOPE_BEGINING
             ;
 
 forloop : FOR_KEYWORD OPEN_BRACKET assignment condition SEMI_COLON iteratoroperation CLOSED_BRACKET SCOPE_BEGINING body SCOPE_END 
- { printf("A For Loop was declared right here.");}
-     ;
+    ;
 
 iteratoroperation : VARIABLE EQUAL expr
                 | unioperatorexpression
@@ -159,7 +176,7 @@ body    : assignment body /*{printf("ACCEPTED");}*/
         | functiondeclaration body
         | functiondefinition body
         | unioperatorexpression SEMI_COLON body
-        |{$$ = NULL;}
+        |{ $$ = opr(9999, 0);}
         ;
 comment : COMMENT 
         ;
