@@ -71,7 +71,7 @@ true|false|vrai|faux|vero|falso       { return BOOLEAN; }
 ";"                                   { return SEMI_COLON; }
 "("                                   { return OPEN_BRACKET; }
 ")"                                   { return CLOSED_BRACKET; }
-(-)?[0-9]+                            { yylval.val = malloc(sizeof(struct number)); yylval.val->iVal = atoi(yytext); yylval.val->type = INT_TYPE; return INT; }
+(-)?[0-9]+                            { yylval.val->iVal = atoi(yytext); yylval.val->type = INT_TYPE; return INT; }
 (-)?[0-9]*\.?[0-9]+                   { yylval.val->fVal = atof(yytext); yylval.val->type = FLOAT_TYPE; return FLOAT;}
 \".*\"                                { yylval.val->sVal = strdup(yytext); yylval.val->type = STRING_TYPE; return STRING; }
 [a-zA-Z_][a-z_A-Z0-9]*                { yylval.variableName = strdup(yytext); return VARIABLE; }

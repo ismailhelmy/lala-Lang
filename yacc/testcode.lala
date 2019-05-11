@@ -4,4 +4,19 @@ int e;
 string w;
 float s5awy;
 e = 300;
+a = 100.0;
+s5awy = 100.0;
+w = "hey man";
+float e;
+int i;
+for(i = 0; i < 10; i += 1)
+{
+    int x;
+    e = 10;
+}
+for(i = 0; i < 10; i += 1)
+{
+    int x;
+    e = 10;
+}
 Epilogue

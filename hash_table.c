@@ -38,6 +38,10 @@ struct node {
     struct node * next;
 } *table[CHAIN];
 
+typedef struct nodey {
+    symTableNode *same; // 
+    symTableNode *next;
+} symTableNode; 
 
 
 int getHash(char* variableName)
@@ -169,16 +173,16 @@ void printTableEntry(struct node* startingNode)
     {
         if(strcmp(p->value->type,"int") == 0)
         {
-            printf("%s\t%s\t%d\n", p->value->variableName, p->value->type, (p->value->value.valueInt));
+            printf("%s\t%s\t%d\t%d\t%d\n", p->value->variableName, p->value->type, (p->value->value.valueInt), p->value->isConstant, p->value->scopeId);
         }else if(strcmp(p->value->type, "string") == 0)
         {
-            printf("%s\t%s\t%s\n", p->value->variableName, p->value->type, p->value->value.valueString);
+            printf("%s\t%s\t%s\t%d\t%d\n", p->value->variableName, p->value->type, p->value->value.valueString, p->value->isConstant, p->value->scopeId);
         }else if(strcmp(p->value->type, "float") == 0)
         {
-            printf("%s\t%s\t%f\n", p->value->variableName, p->value->type, p->value->value.valueFloat);
+            printf("%s\t%s\t%f\t%d\t%d\n", p->value->variableName, p->value->type, p->value->value.valueFloat, p->value->isConstant, p->value->scopeId);
         }else if(strcmp(p->value->type,"boolean") == 0)
         {
-            printf("%s\t%s\t%s\n", p->value->variableName, p->value->type, p->value->value.valueBool == 1? "true": "false");
+            printf("%s\t%s\t%s\t\n", p->value->variableName, p->value->type, p->value->value.valueBool == 1? "true": "false");
         }
         p = p->next;
     }
@@ -186,7 +190,7 @@ void printTableEntry(struct node* startingNode)
 
 void printTable()
 {
-    printf("id\ttype\tvalue\n-----------------------\n");
+    printf("id\ttype\tvalue\t\tisConstant\tscope\n------------------------------------------------------\n");
     for(int i = 0; i < CHAIN; i++)
     {
         printTableEntry(table[i]);
