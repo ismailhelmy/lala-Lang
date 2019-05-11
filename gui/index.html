@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <link
+      rel="icon"
+      href="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/60/google/146/male-technologist_1f468-200d-1f4bb.png"
+    />
+    <title>LALA LANG Editor</title>
+    <link
+      rel="stylesheet"
+      data-name="vs/editor/editor.main"
+      href="node_modules/monaco-editor/min/vs/editor/editor.main.css"
+    />
+    <style>
+      #side-bar {
+        height: 100%;
+        width: 23.24%;
+        background: linear-gradient(180deg, #030329 0%, #4A19C2 100%);
+        margin-left: 0px;
+        margin-top: 0px;
+        padding-left: 1.25%;
+        padding-bottom: 0;
+      }
+      #editor-container {
+        height: 100%;
+        width: 76.8%;
+        margin-left: 23.24%;
+        background-color: #06070C;
+        float: right;
+      }
+      html, body, section{
+        width: 100%;
+        height: 100%;
+        padding: 0px;
+        margin: 0px;
+      }
+
+      .la-la-lang {
+        height: 7.99%;
+        width: 100%;
+        color: #FFF;
+        font-family: YasashiiW01-Bold;
+        font-size: 70px;
+        line-height: 115px;
+        white-space: nowrap;
+        position: relative;
+      }
+      #hamada {
+        height: 2.85%;
+        width: 6.05%;
+        color: #FFF;
+        font-family: YasashiiHairlineW01-Bold;
+        font-size: 18px;
+        left: 1%;
+        line-height: 41px;
+        position: relative;
+        white-space: nowrap;
+      }
+      .group {
+        height: 41px;
+        width: 100%;
+      }
+      #badawy {
+        height: 2.85%;
+        width: 5.66%;
+        color: #FFF;
+        font-family: YasashiiHairlineW01-Bold;
+        font-size: 18px;
+        margin-left: 68%;
+        position: relative;
+        white-space: nowrap;
+        line-height: 41px;
+      }
+      .second-line {
+        height: 42px;
+        width: 100%;
+      }
+      #omar {
+        height: 2.85%;
+        width: 4.57%;
+        color: #FFF;
+        font-family: YasashiiHairlineW01-Bold;
+        font-size: 18px;
+        margin-left: 72%;
+        line-height: 41px;
+        position: relative;
+        white-space: nowrap;
+      }
+      #helmy {
+        height: 2.85%;
+        width: 4.14%;
+        color: #FFF;
+        font-family: YasashiiHairlineW01-Bold;
+        font-size: 18px;
+        left: 1%;
+        line-height: 41px;
+        white-space: nowrap;
+        position: relative;
+      }
+      .button {
+        height: 4%;
+        width: 49%;
+        margin-bottom: -15px;
+        padding-left: 37%;
+        border-radius: 8px;
+        background-color: #FFF;
+        font-family: YasashiiHairlineW01-Bold;
+        font-size: 18px;
+        line-height: 41px;
+        float: bottom;
+        white-space: nowrap;
+        position: relative;
+      }
+      .button:hover
+      {
+        background-color: #06070C;
+        color: #FFF;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <section>
+      <div id="editor-container"></div>
+      
+      <div id = "side-bar">
+          <div class="la-la-lang">LALA LANG</div>
+          <section class="group">
+            <div id = "hamada">HAMADA</div>
+            <div id = "badawy">BADAWY</div>
+          </section>
+          <section class="second-line">
+            <div id = "helmy">HELMY</div>
+            <div id = "omar">OMAR</div>
+          </section>
+          <div class="button">BUILD</div>
+      </div>
+
+      
+    </section>
+    <script>
+      // important to get attached to window and be writable
+      window.require = { paths: { vs: "node_modules/monaco-editor/min/vs" } };
+    </script>
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src="node_modules/monaco-editor/min/vs/loader.js"></script>
+    <script src="node_modules/monaco-editor/min/vs/editor/editor.main.nls.js"></script>
+    <script src="node_modules/monaco-editor/min/vs/editor/editor.main.js"></script>
+    <script>
+      monaco.languages.register({ id: 'lala-lang' });
+
+      monaco.languages.setMonarchTokensProvider('lala-lang',{
+          typeKeywords : [
+            'bool', 'booléen','booleano', 'string', 'chaîne', 'stringa', 'float', 'flotte', 'flutter', 'intero', 'entier', 'int' 
+          ],
+          tokenizer: {
+
+          }
+        }
+      );
+      monaco.editor.defineTheme('lalatheme', {
+        base: 'vs-dark',
+        inherit: true,
+        rules: [
+          { token: 'types', foreground: 'ff0000' },
+          { token: 'other' , foreground : 'ff0000'}
+        ],
+        colors: {
+            'editor.background': '#06070C'
+        }
+        });
+      const editor = monaco.editor.create(
+        document.getElementById("editor-container"),
+        {
+          value: `// [WINTER]\n`,
+          theme: "lalatheme",
+          smoothScrolling: true,
+          minimap: {
+            enabled: false
+          },
+          formatOnType: true,
+          language: "csharp"
+        }
+      );
+    </script>
+
+    
+  </body>
+</html>
