@@ -66,7 +66,7 @@ declaration : typekeyword VARIABLE SEMI_COLON {insertdeclaration($1, $2);}
             | OPEN_SQUARE ENTER VARIABLE WITH typekeyword CLOSED_SQUARE
             ;
 
-assignment  : VARIABLE EQUAL intexpr SEMI_COLON  {Value val; val.valueInt = $3; assign_var_expr($1, val, 0); } 
+assignment  : VARIABLE EQUAL intexpr SEMI_COLON  {Value val; val.valueInt = $3; assign_var_expr($1, val, 0); printf("The scope is %d /n",scopeLevel); } 
 			| VARIABLE EQUAL floatexpr SEMI_COLON {Value val; val.valueFloat = $3; assign_var_expr($1, val, 1); } 
 			| VARIABLE EQUAL STRING SEMI_COLON {Value val; val.valueString = $3; assign_var_expr($1, val, 2); }
             | VARIABLE EQUAL functioncall SEMI_COLON {/*check if var and function exists*/}
@@ -90,7 +90,7 @@ paramterlist : typekeyword VARIABLE paramterlist
             |
             ;
 
-elseifstmt : ELSEIF_KEYWORD OPEN_BRACKET condition CLOSED_BRACKET OpenScope body ClosedScope elseifstmt
+elseifstmt : ELSEIF_KEYWORD OPEN_BRACKET condition CLOSED_BRACKET OpenScope body ClosedScope elseifstmt 
             |
             ;
 
@@ -186,7 +186,7 @@ int insertdeclaration(char *type, char *var_name)
 		}
 	}
 	else {
-		printf("LINE: %d variable with name %s already declared\n", yylineno, var_name);
+		printf("LINE: %d variable with name %s already declared\n", mylineno, var_name);
 	}
 }
 
@@ -229,12 +229,12 @@ int assign_var_expr(char *var_name, Value expr, int type)
 				default:
 				stype = "no way";
 			}
-			printf("LINE:%d variable %s of type %s incompatible with type %s\n", yylineno, var_name, stype, sym->type);
+			printf("LINE:%d variable %s of type %s incompatible with type %s\n", mylineno, var_name, stype, sym->type);
 		}
 	}
 	else
 	{
-		printf("LINE:%d undeclared variable named %s\n", yylineno, var_name);
+		printf("LINE:%d undeclared variable named %s\n", mylineno, var_name);
 	}
 }
 

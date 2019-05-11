@@ -4,19 +4,19 @@ int e;
 string w;
 float s5awy;
 e = 300;
-a = 100.0;
+
 s5awy = 100.0;
 w = "hey man";
-float e;
-int i;
-for(i = 0; i < 10; i += 1)
-{
-    int x;
-    e = 10;
-}
-for(i = 0; i < 10; i += 1)
-{
-    int x;
-    e = 10;
-}
+
+ if (e==300)
+ {
+     e = 0;
+ }
+ else{
+     e = 1;
+     if (e == 301){
+         e = 0;
+     }
+ }
+
 Epilogue
