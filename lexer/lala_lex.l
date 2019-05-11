@@ -45,6 +45,16 @@ const                                 { return CONST_KEYWORD; }
 switch                                { return SWITCH_KEYWORD; }
 case                                  { return CASE_KEYWORD; }
 "else if"                             { return ELSEIF_KEYWORD; }
+void                                  { return VOID_KEYWORD; }
+break                                 { return BREAK_KEYWORD; }
+default                               { return DEFAULT_KEYWORD; }
+
+
+
+Epilogue|"A hint of a tear in both"   { return END; }
+WINTER|"Another day of sun"           { return START; }
+ENTER                                 { return ENTER; }
+WITH                                  { return WITH; }
 
 true|false|vrai|faux|vero|falso       { return BOOLEAN; }
 
@@ -66,13 +76,8 @@ true|false|vrai|faux|vero|falso       { return BOOLEAN; }
 (-)?[0-9]+                            { yylval.valueInt = atoi(yytext); return INT; }
 (-)?[0-9]*\.?[0-9]+                   { yylval.valueFloat = atof(yytext); return FLOAT;}
 \".*\"                                { yylval.valueString = strdup(yytext); return STRING; }
-[a-z_][a-zA-Z0-9]*                    { yylval.variableName = strdup(yytext); return VARIABLE; }
+[a-zA-Z_][a-z_A-Z0-9]*                { yylval.variableName = strdup(yytext); return VARIABLE; }
 
-
-Epilogue|"A hint of a tear in both"   { return END; }
-WINTER|"Another day of sun"           { return START; }
-ENTER                                 { return ENTER; }
-WITH                                  { return WITH; }
 
 
 \n                                    { mylineno++; }
