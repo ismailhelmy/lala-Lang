@@ -3,7 +3,6 @@
 	#include <stdlib.h>
 	#include <string.h>
 	#include "../hash_table.c"
-	#include "../structs.h"
 	#include "../lexer/lex.yy.c"
 	#include <stdarg.h>
 	#include <ctype.h>
@@ -161,6 +160,7 @@ body    : assignment body
         | unioperatorexpression SEMI_COLON body
 		|
         ;
+
 comment : COMMENT 
         ;
 
@@ -186,7 +186,7 @@ int insertdeclaration(char *type, char *var_name)
 		}
 	}
 	else {
-		printf("LINE: %d variable with name %s already declared\n", yylineno, var_name);
+		printf("LINE: %d variable with name %s already declared\n", mylineno, var_name);
 	}
 }
 
@@ -229,12 +229,12 @@ int assign_var_expr(char *var_name, Value expr, int type)
 				default:
 				stype = "no way";
 			}
-			printf("LINE:%d variable %s of type %s incompatible with type %s\n", yylineno, var_name, stype, sym->type);
+			printf("LINE: %d variable %s of type %s incompatible with type %s\n", mylineno, var_name, stype, sym->type);
 		}
 	}
 	else
 	{
-		printf("LINE:%d undeclared variable named %s\n", yylineno, var_name);
+		printf("LINE: %d undeclared variable named %s\n", mylineno, var_name);
 	}
 }
 

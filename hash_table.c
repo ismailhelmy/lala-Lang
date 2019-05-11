@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "structs.h"
 
 // Pretty much any prime number is okay for the chain value
 // Also the chain has to be greater than 50
@@ -13,8 +12,6 @@ union Value{
     char* valueString;
     char* variableName;
     int valueBool;
-    nodeType* nPtr;  
-    conNodeType conType;
 };
 
 typedef union Value Value;
@@ -34,15 +31,17 @@ typedef struct symbol symbol;
 struct node {
     char* key;
     symbol* value;
-
+    struct tableNode* t_node;
     struct node * next;
-} *table[CHAIN];
+};
 
 struct tableNode {
+    int scopeId, parentScopeId;
     struct tableNode *prev_sib, *next_sib; // pointing on nodes in same level their parent would be the same 
     struct tableNode *child, *parent; // pointing on parent and child 
 }; 
 
+struct node * table[CHAIN];
 
 int getHash(char* variableName)
 {
