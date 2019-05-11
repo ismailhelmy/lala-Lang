@@ -1,13 +1,17 @@
 ----------- Quadruples defintion and description
 
-LOAD V1, V2
-MUL
-ADD
-SUB
-STORE
-JMP
-INC
-DEC
-PUSH
-POP
-JZ
+LD V1, V2
+MUL V1, V2, V3
+ADD V1, V2, V3
+SUB V1, V2, V3
+STR V1, V2
+JMP V1
+INC V1
+DEC V1
+PUSH V1
+POP V1
+JZ L1
+JNE L1
+JGE L1
+JLE L1
+JE L1
