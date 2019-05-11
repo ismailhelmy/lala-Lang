@@ -16,8 +16,7 @@
     char* valueString;
     char* variableName;
     _Bool valueBool;
-    nodeType* nPtr;
-	conTypeEnum conType;
+	char *type;
 };
 
 %token <valueInt> INT
@@ -25,7 +24,8 @@
 %token <valueString> STRING
 %token <variableName> VARIABLE
 %token <valueBool> BOOLEAN
-%token START END INT_KEYWORD STRING_KEYWORD BOOLEAN_KEYWORD FLOAT_KEYWORD ADD SUBTRACT MULTIPLY DIVIDE POWER BITWISE_XOR BITWISE_AND BITWISE_OR BITWISE_NOT LOGICAL_EQUAL NOT_EQUAL LOGICAL_AND LOGICAL_OR EQUAL
+%token <type> FLOAT_KEYWORD STRING_KEYWORD INT_KEYWORD BOOLEAN_KEYWORD
+%token START END ADD SUBTRACT MULTIPLY DIVIDE POWER BITWISE_XOR BITWISE_AND BITWISE_OR BITWISE_NOT LOGICAL_EQUAL NOT_EQUAL LOGICAL_AND LOGICAL_OR EQUAL
 %token ELSEIF_KEYWORD VOID_KEYWORD DEFAULT_KEYWORD COLON CONST_KEYWORD BREAK_KEYWORD CASE_KEYWORD SWITCH_KEYWORD COMMENT WHILE_KEYWORD IF_KEYWORD ELSE_KEYWORD FOR_KEYWORD LESS_THAN LESS_THAN_EQUAL GREATER_THAN GREATER_THAN_EQUAL SEMI_COLON MODOLU PLUS_EQUAL MINUS_EQUAL IMPORT_KEYWORD COMMA OPEN_BRACKET CLOSED_BRACKET SCOPE_BEGINING SCOPE_END
 %token MODULU
 %token ENTER OPEN_SQUARE CLOSED_SQUARE WITH
@@ -37,8 +37,8 @@
 %right LOGICAL_AND LOGICAL_EQUAL LOGICAL_OR NOT_EQUAL BITWISE_AND BITWISE_XOR BITWISE_OR
 %nonassoc PLUS_EQUAL MINUS_EQUAL BITWISE_NOT
 
+%type <type> typekeyword
 //%type <nPtr> value switchbody switchstmt expr num unioperatorexpression body declaration assignment typekeyword constdeclaration
-%type <valueString> typekeyword
 %%
 
 
@@ -51,7 +51,7 @@ start   : START body END
         ;
 
 
-num     :INT
+num     : INT
 		| FLOAT
         ;
 
@@ -60,13 +60,13 @@ value : num
         | BOOLEAN
         ;
 
-typekeyword : FLOAT_KEYWORD
-            | INT_KEYWORD	
-            | STRING_KEYWORD
-            | BOOLEAN_KEYWORD
+typekeyword : INT_KEYWORD
+			| FLOAT_KEYWORD
+			| STRING_KEYWORD
+			| BOOLEAN_KEYWORD
             ;
 
-declaration : typekeyword VARIABLE SEMI_COLON { insertdeclaration($1, $2); printf("accepted\n");}
+declaration : typekeyword VARIABLE SEMI_COLON {printf("eh %s\n", $1); /*insertdeclaration($1, $2);*/ printf("accepted\n");}
             | OPEN_SQUARE ENTER VARIABLE WITH typekeyword CLOSED_SQUARE
             | constdeclaration
             ;
@@ -173,15 +173,15 @@ int insertdeclaration(char *type, char *var_name)
 {
 	int found;
 	symbol *sym = findSymbol(var_name, &found);
-	printf("printf! %d", __LINE__);
 	if(found != 0)
 	{
-		sym = malloc(sizeof(symbol));
-		sym->variableName = malloc(strlen(var_name));
-		strcpy(sym->variableName, var_name);
-		strcpy(sym->type, type);
-		int s = insertSymbol(sym);
-		if(s) {
+		symbol *s = malloc(sizeof(symbol));
+		s->variableName = malloc(strlen(var_name));
+		strcpy(s->variableName, var_name);
+		s->type = malloc(strlen(type));
+		strcpy(s->type, type);
+		int s1 = insertSymbol(s);
+		if(s1) {
 			printf("success!");
 			printTable();
 		}

@@ -1,4 +1,42 @@
-#include "hash_table.h"
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include "structs.h"
+
+// Pretty much any prime number is okay for the chain value
+// Also the chain has to be greater than 50
+#define CHAIN 53
+
+union Value{
+    int valueInt;
+    float valueFloat;
+    char* valueString;
+    char* variableName;
+    int valueBool;
+    nodeType* nPtr;  
+    conNodeType conType;
+};
+
+typedef union Value Value;
+
+struct symbol{
+    Value value;
+    char* variableName;
+    char* type;
+    int scopeId;
+    int classType;
+    struct symbol* next;
+    int isConstant; // 0 for variables, and 1 for constants
+}*block[CHAIN];
+
+typedef struct symbol symbol;
+
+struct node {
+    char* key;
+    symbol* value;
+
+    struct node * next;
+} *table[CHAIN];
 
 
 
@@ -170,51 +208,51 @@ symbol* createSymbol(char * name, char* type, Value value, int scope, int isCons
     return mysymbol;
 }
 
-void main(void)
-{
-    char* name = "value";
-    symbol * mysymbol = malloc(sizeof(symbol));
-    mysymbol->variableName = malloc(strlen(name));
-    strcpy(mysymbol->variableName, name);
-    mysymbol->value.valueInt = 5;
-    mysymbol->scopeId = 1;
-    mysymbol->type = "int";
-    int hey = insertSymbol(mysymbol);
-    if(hey == 1)
-    {
-        printf("We have inserted that symbol perfectly, cool %d\n", 0);
-    }
-    int isFound;
-    mysymbol = findSymbol(name, &isFound);
-    if(isFound)
-    {
-        printf("Found the symbol with name %s, with value: %d\n", name, mysymbol->value.valueInt);
-    }
-    //printTable();
+// void main(void)
+// {
+//     char* name = "value";
+//     symbol * mysymbol = malloc(sizeof(symbol));
+//     mysymbol->variableName = malloc(strlen(name));
+//     strcpy(mysymbol->variableName, name);
+//     mysymbol->value.valueInt = 5;
+//     mysymbol->scopeId = 1;
+//     mysymbol->type = "int";
+//     int hey = insertSymbol(mysymbol);
+//     if(hey == 1)
+//     {
+//         printf("We have inserted that symbol perfectly, cool %d\n", 0);
+//     }
+//     int isFound;
+//     mysymbol = findSymbol(name, &isFound);
+//     if(isFound)
+//     {
+//         printf("Found the symbol with name %s, with value: %d\n", name, mysymbol->value.valueInt);
+//     }
+//     //printTable();
 
-    Value val;
-    val.valueFloat = 10.5f;
-    symbol * secondSymbol = createSymbol("ismail", "float", val, 0, 1);
+//     Value val;
+//     val.valueFloat = 10.5f;
+//     symbol * secondSymbol = createSymbol("ismail", "float", val, 0, 1);
 
-    val.valueBool = 0;
-    symbol * thirdSymbol = createSymbol("isFound" , "boolean", val, 2, 1);
+//     val.valueBool = 0;
+//     symbol * thirdSymbol = createSymbol("isFound" , "boolean", val, 2, 1);
 
-    int insert = insertSymbol(secondSymbol);
-    insertSymbol(thirdSymbol);
-    printTable();
-    Value newVal;
-    newVal.valueBool = 1;
-    updateSymbol("isFound", newVal);
-    printf("Updated isFound to true\n");
-    printTable();
+//     int insert = insertSymbol(secondSymbol);
+//     insertSymbol(thirdSymbol);
+//     printTable();
+//     Value newVal;
+//     newVal.valueBool = 1;
+//     updateSymbol("isFound", newVal);
+//     printf("Updated isFound to true\n");
+//     printTable();
 
-    newVal.valueString = "ibrahim";
-    insertSymbol(createSymbol("name", "string", newVal, 2, 0));
-    printf("\nAdded a new string variable\n");
-    printTable();
+//     newVal.valueString = "ibrahim";
+//     insertSymbol(createSymbol("name", "string", newVal, 2, 0));
+//     printf("\nAdded a new string variable\n");
+//     printTable();
 
-    newVal.valueString = "ismail";
-    updateSymbol("name", newVal);
-    printTable();
+//     newVal.valueString = "ismail";
+//     updateSymbol("name", newVal);
+//     printTable();
 
-}
+// }

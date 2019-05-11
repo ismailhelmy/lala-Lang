@@ -1,5 +1,4 @@
 %{
-  //include "defs.h"
    #include <stdlib.h>
    #include <stdio.h>
    #include <string.h>
@@ -9,11 +8,12 @@
 %}
 
 %%
-\/\*.*\*\/                              { return COMMENT; }
-int|entier|intero                     { return INT_KEYWORD; }
-float|flotte|flutter                  { return FLOAT_KEYWORD; }
-string|chaîne|stringa                 { return STRING_KEYWORD; }
-bool|booléen|booleano                 { return BOOLEAN_KEYWORD; }
+\/\*.*\*\/                            { return COMMENT; }
+
+int|entier|intero                     {yylval.type = strdup(yytext); return INT_KEYWORD; }
+float|flotte|flutter                  {yylval.type = strdup(yytext); return FLOAT_KEYWORD; }
+string|chaîne|stringa                 {yylval.type = strdup(yytext); return STRING_KEYWORD; }
+bool|booléen|booleano                 {yylval.type = strdup(yytext); return BOOLEAN_KEYWORD; }
 
 \+|plus|più                           { return ADD; }
 \-|minus|moins|meno                   { return SUBTRACT; }
@@ -28,8 +28,8 @@ bool|booléen|booleano                 { return BOOLEAN_KEYWORD; }
 \|                                    { return BITWISE_OR; }
 not|ne|non                            { return BITWISE_NOT; }
 
-"and"|"et"|"con"                            { return LOGICAL_AND; }
-"or"|"ou"|"ovvero"                          { return LOGICAL_OR; }
+"and"|"et"|"con"                      { return LOGICAL_AND; }
+"or"|"ou"|"ovvero"                    { return LOGICAL_OR; }
 ==|égal\?|pari\?                      { return LOGICAL_EQUAL; }
 !=|neqal\?|nonpari\?                  { return NOT_EQUAL; }
 
