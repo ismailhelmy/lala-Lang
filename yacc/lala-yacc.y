@@ -2,7 +2,7 @@
         #include <stdio.h>
         #include "../hash_table.h"
     nodeType *opr(int oper, int nops, ...);
-	nodeType *id(int i, int flag, char name[], int per, int brace);
+	nodeType *id(int flag, char name[], int per);
 	nodeType *getid(char name[]);
 	nodeType *con(char* s, int flag);
 	void ftoa(float n,char res[], int afterpoint);
@@ -10,6 +10,16 @@
 	int ex(nodeType *p);
     extern int yylex();
     void yyerror(char *msg);
+    int isLogical = 0;
+	int level = -1;
+	int scopeId = 0;
+	int isDeclaration = 0 ;
+	void openScope();
+	void closeScope();
+	#define nestingStackMaxLength 15
+	int NestingStack[15];
+	char *my_itoa(int num, char *str);
+
 %}
 
 %union{
@@ -18,7 +28,8 @@
     char* valueString;
     char* variableName;
     _Bool valueBool;
-     nodeType* nPtr;
+    nodeType* nPtr;
+	conTypeEnum conType;
 };
 
 %token <valueInt> INT
@@ -38,7 +49,7 @@
 %right LOGICAL_AND LOGICAL_EQUAL LOGICAL_OR NOT_EQUAL BITWISE_AND BITWISE_XOR BITWISE_OR
 %nonassoc PLUS_EQUAL MINUS_EQUAL BITWISE_NOT
 
-%type <nPtr> expr num unioperatorexpression body
+%type <nPtr> value switchbody switchstmt expr num unioperatorexpression body declaration assignment typekeyword constdeclaration
 
 %%
 
@@ -52,39 +63,58 @@ start   : START body END /*{printf("ACCEPTED");}*/
         ;
 
 
-num     : INT | FLOAT
+num     :INT { char c[] = {}; my_itoa($1, c);  $$ = con(c,0);}
+		| FLOAT { char c[] = {}; ftoa($1, c, 10);  $$ = con(c,1);}
         ;
 
-value : num
-        | STRING
-        | BOOLEAN
+value : num {$$ = $1;}
+        | STRING{ $$ = con($1,3);}
+        | BOOLEAN {if ($1) $$ = con("true",4); else $$ = con("false",4); }
         ;
 
-typekeyword : FLOAT_KEYWORD
-            | INT_KEYWORD
-            | STRING_KEYWORD
-            | BOOLEAN_KEYWORD
+typekeyword : FLOAT_KEYWORD { $$ = con("float",3);}
+            | INT_KEYWORD	{ $$ = con("int",3);}
+            | STRING_KEYWORD{ $$ = con("string",3);}
+            | BOOLEAN_KEYWORD{ $$ = con("bool",3);}
             ;
 
-declaration : typekeyword VARIABLE SEMI_COLON { printf("A variable with the name : %s declared using c style.\n", $2);}
-            | OPEN_SQUARE ENTER VARIABLE WITH typekeyword CLOSED_SQUARE { printf("A variable with the name : %s declared using LA LA style.\n", $3);}
-            | constdeclaration
+declaration : typekeyword VARIABLE SEMI_COLON {
+						isDeclaration = 1;
+					        if ($1 == getid("int"))  
+								$$ = id( 0, $2, 0);
+								else if($1 == getid("float")) $$ = id(1, $2, 0);
+								else if  ($1 == getid("char")) $$ = id(2, $2, 0);
+								else if  ($1 == getid("string")) $$ = id(3, $2, 0);
+								else if($1 == getid("boolean")) $$ = id( 4, $2, 0);
+                                }
+						
+            | OPEN_SQUARE ENTER VARIABLE WITH typekeyword CLOSED_SQUARE {
+						isDeclaration = 1;
+					        if ($5 == getid("int") ) $$ = id( 0, $3, 0);
+								else if($5 == getid("float")) $$ = id(1, $3, 0);
+								else if  ($5 == getid("char")) $$ = id(2, $3, 0);
+								else if  ($5 == getid("string")) $$ = id(3, $3, 0);
+								else if($5 == getid("boolean") ) $$ = id( 4, $3, 0);
+                                }
+            | constdeclaration {$$ = $1;}
             ;
 
-assignment  : VARIABLE EQUAL expr SEMI_COLON { printf("A variable with the name : %s is assigned value\n",$1);}
+assignment  : VARIABLE EQUAL expr SEMI_COLON  { $$ = opr(EQUAL, 2, getid($1), $3);}
             | typekeyword VARIABLE EQUAL expr SEMI_COLON { printf("A variable with the name : %s is assigned value of an expression : %d\n",$2, $4);}
             | VARIABLE EQUAL functioncall SEMI_COLON
             ;
+OpenScope   : SCOPE_BEGINING {openScope();}
 
-constdeclaration : CONST_KEYWORD typekeyword VARIABLE EQUAL value SEMI_COLON
+ClosedScope : SCOPE_END {closeScope();}
+constdeclaration : CONST_KEYWORD typekeyword VARIABLE EQUAL value SEMI_COLON { $$  = opr(EQUAL,2,getid($3),$5);}
             ;
 
-ifstmt :    IF_KEYWORD OPEN_BRACKET condition CLOSED_BRACKET SCOPE_BEGINING body SCOPE_END elseifstmt elsestmt { printf("An if condition was declared right here.");}
+ifstmt :    IF_KEYWORD OPEN_BRACKET condition CLOSED_BRACKET OpenScope body ClosedScope elseifstmt elsestmt { printf("An if condition was declared right here.");}
        ;
 
 functiondeclaration : typekeyword VARIABLE OPEN_BRACKET paramterlist CLOSED_BRACKET SEMI_COLON
 
-functiondefinition : typekeyword VARIABLE OPEN_BRACKET paramterlist CLOSED_BRACKET SCOPE_BEGINING body SCOPE_END
+functiondefinition : typekeyword VARIABLE OPEN_BRACKET paramterlist CLOSED_BRACKET OpenScope body ClosedScope
         ;
 functioncall : VARIABLE OPEN_BRACKET paramterlist CLOSED_BRACKET
 
@@ -93,30 +123,29 @@ paramterlist : typekeyword VARIABLE paramterlist
             |
             ;
 
-elseifstmt : ELSEIF_KEYWORD OPEN_BRACKET condition CLOSED_BRACKET SCOPE_BEGINING body SCOPE_END elseifstmt
+elseifstmt : ELSEIF_KEYWORD OPEN_BRACKET condition CLOSED_BRACKET OpenScope body ClosedScope elseifstmt
             |
             ;
 
-elsestmt : ELSE_KEYWORD SCOPE_BEGINING body SCOPE_END
+elsestmt : ELSE_KEYWORD OpenScope body ClosedScope
         |
         ;
 
 
-switchbody : CASE_KEYWORD INT COLON SCOPE_BEGINING body SCOPE_END switchbody
-            |
+switchbody : CASE_KEYWORD INT COLON OpenScope body ClosedScope switchbody {$$ = opr(SWITCH_KEYWORD,2,$2,$5);} 
+			| { $$ = NULL; }
         ;
 
-switchstmt : SWITCH_KEYWORD OPEN_BRACKET VARIABLE CLOSED_BRACKET SCOPE_BEGINING switchbody SCOPE_END
-        ;
+switchstmt : SWITCH_KEYWORD OPEN_BRACKET VARIABLE CLOSED_BRACKET OpenScope switchbody ClosedScope
+			 {$$ = opr(SWITCH_KEYWORD,2,getid($3),$6);};
 
-whileloop   : WHILE_KEYWORD OPEN_BRACKET condition CLOSED_BRACKET SCOPE_BEGINING body SCOPE_END 
+whileloop   : WHILE_KEYWORD OPEN_BRACKET condition CLOSED_BRACKET OpenScope body ClosedScope 
 { printf("A While loop was declared right here.\n");}
   
             ;
 
-forloop : FOR_KEYWORD OPEN_BRACKET assignment condition SEMI_COLON iteratoroperation CLOSED_BRACKET SCOPE_BEGINING body SCOPE_END 
- { printf("A For Loop was declared right here.");}
-     ;
+forloop : FOR_KEYWORD OPEN_BRACKET assignment condition SEMI_COLON iteratoroperation CLOSED_BRACKET OpenScope body ClosedScope 
+    ;
 
 iteratoroperation : VARIABLE EQUAL expr
                 | unioperatorexpression
@@ -161,7 +190,7 @@ body    : assignment body /*{printf("ACCEPTED");}*/
         | functiondeclaration body
         | functiondefinition body
         | unioperatorexpression SEMI_COLON body
-        |{$$ = NULL;}
+        |{ $$ = opr(9999, 0);}
         ;
 comment : COMMENT 
         ;
@@ -177,6 +206,16 @@ comment : COMMENT
 
 #define SIZEOF_NODETYPE ((char *)&p->con - (char *)p)  
 
+char *my_itoa(int num, char *str)
+{
+        if(str == NULL)
+        {
+                return NULL;
+        }
+        sprintf(str, "%d", num);
+        return str;
+}
+
 nodeType *con(char* s, int flag) { 
 	nodeType *p;      
 	
@@ -191,53 +230,45 @@ nodeType *con(char* s, int flag) {
 	return p; 
 }
 
-nodeType *id(int i, int flag, char name[], int per, int brace) {
-	nodeType *p;
-	
-	/* allocate node */     
-	if ((p = malloc(sizeof(nodeType))) == NULL)         
-		yyerror("out of memory");   
-	
-	int j = 0;	
-	//while(symId[j] != NULL) {
-	for(j = 0; j < 26; j++){
-		if(symId[j] != NULL) {
-			if(strcmp(symId[j], name) == 0) {
-				p->type = typeId;     
-				p->id.i = j;
-				p->id.name = strdup(name);
-				if(symBraces[j] == -5) {
-					p->id.permission = per;
-					p->id.flag = flag;
-					symType[j] = flag;
-					symInit[j] = 0;
-					symUsed[j] = 0;
-					symBraces[j] = brace;
-				}
-				else {
-					p->id.permission = -3;
-					p->id.flag = symType[j];
-				}
-				return p;
-			}
-		}
-	}
-	
-	symId[i] = strdup(name);
-	symType[i] = flag;
-	symInit[i] = 0;
-    symUsed[i] = 0;
-	symBraces[i] = brace;
+nodeType *id( int flag, char name[], int per) {
 
-	/* copy information */     
-	p->type = typeId;     
-	p->id.i = i;
+	//Implementing new entry in the symbol table :)
+	struct symbol *STEntry = malloc(sizeof(struct symbol));
+	(*STEntry).variableName = name;
+	(*STEntry).classType = flag;
+	if(level!=-1)
+		(*STEntry).scopeId = NestingStack[level];
+	if(per == -2)
+		(*STEntry).isConstant = 1;
+	else
+		(*STEntry).isConstant = 0;
+
+
+	nodeType *p;
+
+	/* allocate node */
+	if ((p = malloc(sizeof(nodeType))) == NULL)
+		yyerror("out of memory");
+
+
+	if( insertSymbol(STEntry) )
+	{
+		p->type = typeId;
+		p->id.scopeId = NestingStack[level];
+		p->id.name = strdup(name);
+		p->id.permission = per;
+		p->id.flag = flag;
+		p->id.permission = isDeclaration;
+		isDeclaration = 0;
+		return p;
+
+	}
+
 	p->id.name = strdup(name);
-	p->id.flag = flag;
-	p->id.permission = per;
-	
-	return p; 
-}	
+	p->type = typeId;
+	p->id.permission = -3;
+	return p;
+}
 
 nodeType *getid(char name[]) {
 	nodeType *p;
@@ -309,6 +340,26 @@ void freeNode(nodeType *p) {
 	
 	free (p); 
 } 
+
+
+void openScope(){
+	level = level + 1;
+	if(level!=-1)
+		NestingStack[level] = scopeId;
+	scopeId = scopeId + 1;
+
+}
+
+
+void closeScope(){
+
+	level = level -1;
+
+	if(level ==-1)
+		printTable();
+
+}
+
 
 int main(void){
     yyparse();

@@ -17,6 +17,7 @@ union Value{
     char* variableName;
     int valueBool;
     nodeType* nPtr;  
+    conNodeType conType;
 };
 
 typedef union Value Value;
@@ -25,7 +26,8 @@ struct symbol{
     Value value;
     char* variableName;
     char* type;
-    int scope;
+    int scopeId;
+    int classType;
     struct symbol* next;
     int isConstant; // 0 for variables, and 1 for constants
 }*block[CHAIN];
