@@ -52,3 +52,5 @@
 #define BREAK_KEYWORD 52
 #define COLON 53
 #define ELSEIF_KEYWORD 54
+#define DEFAULT_KEYWORD 55
+#define VOID_KEYWORD 56
