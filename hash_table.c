@@ -38,10 +38,10 @@ struct node {
     struct node * next;
 } *table[CHAIN];
 
-typedef struct nodey {
-    symTableNode *same; // 
-    symTableNode *next;
-} symTableNode; 
+struct tableNode {
+    struct tableNode *prev_sib, *next_sib; // pointing on nodes in same level their parent would be the same 
+    struct tableNode *child, *parent; // pointing on parent and child 
+}; 
 
 
 int getHash(char* variableName)
