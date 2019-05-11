@@ -10,10 +10,10 @@
 %%
 \/\*.*\*\/                            { return COMMENT; }
 
-int|entier|intero                     {yylval.type = strdup(yytext); return INT_KEYWORD; }
-float|flotte|flutter                  {yylval.type = strdup(yytext); return FLOAT_KEYWORD; }
-string|chaîne|stringa                 {yylval.type = strdup(yytext); return STRING_KEYWORD; }
-bool|booléen|booleano                 {yylval.type = strdup(yytext); return BOOLEAN_KEYWORD; }
+int                                   { yylval.typeName = strdup(yytext); return typekeyword; }
+float|flotte|flutter                  { yylval.typeName = strdup(yytext); return typekeyword; }
+string|chaîne|stringa                 { yylval.typeName = strdup(yytext); return typekeyword; }
+bool|booléen|booleano                 { yylval.typeName = strdup(yytext); return typekeyword; }
 
 \+|plus|più                           { return ADD; }
 \-|minus|moins|meno                   { return SUBTRACT; }
@@ -71,9 +71,9 @@ true|false|vrai|faux|vero|falso       { return BOOLEAN; }
 ";"                                   { return SEMI_COLON; }
 "("                                   { return OPEN_BRACKET; }
 ")"                                   { return CLOSED_BRACKET; }
-(-)?[0-9]+                            { yylval.valueInt = atoi(yytext); return INT; }
-(-)?[0-9]*\.?[0-9]+                   { yylval.valueFloat = atof(yytext); return FLOAT;}
-\".*\"                                { yylval.valueString = strdup(yytext); return STRING; }
+(-)?[0-9]+                            { yylval.val = malloc(sizeof(struct number)); yylval.val->iVal = atoi(yytext); yylval.val->type = INT_TYPE; return INT; }
+(-)?[0-9]*\.?[0-9]+                   { yylval.val->fVal = atof(yytext); yylval.val->type = FLOAT_TYPE; return FLOAT;}
+\".*\"                                { yylval.val->sVal = strdup(yytext); yylval.val->type = STRING_TYPE; return STRING; }
 [a-zA-Z_][a-z_A-Z0-9]*                { yylval.variableName = strdup(yytext); return VARIABLE; }
 
 

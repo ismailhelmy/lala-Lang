@@ -6,8 +6,26 @@
 	#include "../structs.h"
 	#include "../lexer/lex.yy.c"
 	#include <stdarg.h>
+	#include <ctype.h>
 	int insertdeclaration(char *, char *);
 	int yyerror(char *msg);
+	int assign_var_expr(char *var_name, struct number *expr);
+	int reduceNum(struct number *v1, struct number *num);
+
+	struct number
+	{
+		union
+		{
+			int iVal;
+			float fVal;
+			char* sVal;
+		};
+		char type;
+	};
+
+	char INT_TYPE = 1;
+	char FLOAT_TYPE = 2;
+	char STRING_TYPE = 3;
 %}
 
 %union{
@@ -15,16 +33,19 @@
     float valueFloat;
     char* valueString;
     char* variableName;
+	char* typeName;
+	struct number *val;
     _Bool valueBool;
-	char *type;
 };
 
-%token <valueInt> INT
-%token <valueFloat> FLOAT
-%token <valueString> STRING
+%token <val> INT
+%token <val> FLOAT
+%token <val> STRING
 %token <variableName> VARIABLE
-%token <valueBool> BOOLEAN
-%token <type> FLOAT_KEYWORD STRING_KEYWORD INT_KEYWORD BOOLEAN_KEYWORD
+%token <val> BOOLEAN
+%type <typeName> typekeyword
+%type <val> expr num value
+%token <typeName> FLOAT_KEYWORD STRING_KEYWORD INT_KEYWORD BOOLEAN_KEYWORD
 %token START END ADD SUBTRACT MULTIPLY DIVIDE POWER BITWISE_XOR BITWISE_AND BITWISE_OR BITWISE_NOT LOGICAL_EQUAL NOT_EQUAL LOGICAL_AND LOGICAL_OR EQUAL
 %token ELSEIF_KEYWORD VOID_KEYWORD DEFAULT_KEYWORD COLON CONST_KEYWORD BREAK_KEYWORD CASE_KEYWORD SWITCH_KEYWORD COMMENT WHILE_KEYWORD IF_KEYWORD ELSE_KEYWORD FOR_KEYWORD LESS_THAN LESS_THAN_EQUAL GREATER_THAN GREATER_THAN_EQUAL SEMI_COLON MODOLU PLUS_EQUAL MINUS_EQUAL IMPORT_KEYWORD COMMA OPEN_BRACKET CLOSED_BRACKET SCOPE_BEGINING SCOPE_END
 %token MODULU
@@ -37,7 +58,6 @@
 %right LOGICAL_AND LOGICAL_EQUAL LOGICAL_OR NOT_EQUAL BITWISE_AND BITWISE_XOR BITWISE_OR
 %nonassoc PLUS_EQUAL MINUS_EQUAL BITWISE_NOT
 
-%type <type> typekeyword
 //%type <nPtr> value switchbody switchstmt expr num unioperatorexpression body declaration assignment typekeyword constdeclaration
 %%
 
@@ -51,27 +71,27 @@ start   : START body END
         ;
 
 
-num     : INT
-		| FLOAT
+num     : INT  { printf("val : %d\n", $1->iVal);}
+		| FLOAT { /*$$->fVal = $1->iVal;*/ }
         ;
 
 value : num
-        | STRING
+        | STRING 
         | BOOLEAN
         ;
 
-typekeyword : INT_KEYWORD
-			| FLOAT_KEYWORD
-			| STRING_KEYWORD
-			| BOOLEAN_KEYWORD
+typekeyword : INT_KEYWORD {$$ = "int"; }
+			| FLOAT_KEYWORD {$$ = "float"; }
+			| STRING_KEYWORD {$$ = "string"; }
+			| BOOLEAN_KEYWORD {$$ = "bool"; }
             ;
 
-declaration : typekeyword VARIABLE SEMI_COLON {printf("eh %s\n", $1); /*insertdeclaration($1, $2);*/ printf("accepted\n");}
+declaration : typekeyword VARIABLE SEMI_COLON {insertdeclaration($1, $2);}
             | OPEN_SQUARE ENTER VARIABLE WITH typekeyword CLOSED_SQUARE
             | constdeclaration
             ;
 
-assignment  : VARIABLE EQUAL expr SEMI_COLON  {/*check if expr of same type as var,check if variable exists, assign value to var*/} 
+assignment  : VARIABLE EQUAL expr SEMI_COLON  {/*assign_var_expr($1, $3);*/ } 
             | typekeyword VARIABLE EQUAL expr SEMI_COLON {/*check if expr of same type as var,check if variable doesnt exist, assign value to var*/} 
             | VARIABLE EQUAL functioncall SEMI_COLON {/*check if var and function exists*/}
             ;
@@ -121,17 +141,14 @@ iteratoroperation : VARIABLE EQUAL expr
                 | unioperatorexpression
                 ;
        
-expr    : expr MULTIPLY expr 
+expr    : expr MULTIPLY expr { /*if($1->type == $3->type && $1->type != STRING_TYPE) {$$->iVal = $1->iVal + $3->iVal; }*/ }
             | expr DIVIDE expr
-            | num 
-            | expr ADD expr 
-            | expr SUBTRACT expr 
-            | VARIABLE 
+            | num {	/*reduceNum($1, $$);*/}
+			| expr ADD expr
+            | expr SUBTRACT expr  
             | BOOLEAN 
-            | expr LOGICAL_AND expr 
-            | expr LOGICAL_EQUAL expr
             | OPEN_BRACKET expr CLOSED_BRACKET
-            | STRING
+            | STRING 
             ;
 
 condition : expr LOGICAL_AND expr
@@ -160,7 +177,7 @@ body    : assignment body
         | functiondeclaration body
         | functiondefinition body
         | unioperatorexpression SEMI_COLON body
-        |
+		|
         ;
 comment : COMMENT 
         ;
@@ -173,7 +190,7 @@ int insertdeclaration(char *type, char *var_name)
 {
 	int found;
 	symbol *sym = findSymbol(var_name, &found);
-	if(found != 0)
+	if(found == 0)
 	{
 		symbol *s = malloc(sizeof(symbol));
 		s->variableName = malloc(strlen(var_name));
@@ -182,9 +199,35 @@ int insertdeclaration(char *type, char *var_name)
 		strcpy(s->type, type);
 		int s1 = insertSymbol(s);
 		if(s1) {
-			printf("success!");
 			printTable();
 		}
+	}
+	else {
+		printf("error at line: %d\n", yylineno);
+	}
+}
+
+int assign_var_expr(char *var_name, struct number *expr)
+{
+	int found;
+	symbol *sym = findSymbol(var_name, &found);
+	if(found != 0)
+	{
+		if(expr->type == INT_TYPE && strcmp(sym->type, "int") == 0)
+		{
+			sym->value.valueInt = expr->iVal;
+		}
+	}
+}
+
+int reduceNum(struct number *v1, struct number *num)
+{
+	if(v1->type == INT_TYPE) {
+		num->iVal = v1->iVal; 
+	} 
+	else if(v1->type == FLOAT_TYPE)
+	{
+		num->fVal = v1->fVal;
 	}
 }
 
