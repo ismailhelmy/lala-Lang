@@ -15,12 +15,12 @@ float|flotte|flutter                  { yylval.typeName = strdup(yytext); return
 string|chaîne|stringa                 { yylval.typeName = strdup(yytext); return typekeyword; }
 bool|booléen|booleano                 { yylval.typeName = strdup(yytext); return typekeyword; }
 
-\+|plus|più                           { return ADD; }
+\+|plus|più                           { yylval.typeName = "ADD"; return ADD; }
 \-|minus|moins|meno                   { return SUBTRACT; }
 \/|divide|diviser|dividersi           { return DIVIDE;}
 =|equal|égal|pari                     { return EQUAL; }
 \*\*|pow|puis|potere                  { return POWER; }
-\*|multiplier|multiply|moltiplicare   { return MULTIPLY; }
+\*|multiplier|multiply|moltiplicare   { yylval.typeName = "MUL"; return MULTIPLY; }
 "%"                                   { return MODULU; }
 
 \^                                    { return BITWISE_XOR; }

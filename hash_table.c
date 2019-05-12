@@ -41,6 +41,7 @@ struct tableNode {
     struct tableNode *child, *parent; // pointing on parent and child 
 }; 
 
+//the parent symbol table
 struct node * table[CHAIN];
 
 int getHash(char* variableName)

@@ -2,21 +2,8 @@ WINTER
 int ra7eem;
 int e;
 string w;
-float s5awy;
-e = 300;
+e = 9+2;
+if(e and 1){
 
-s5awy = 100.0;
-w = "hey man";
-
- if (e==300)
- {
-     e = 0;
- }
- else{
-     e = 1;
-     if (e == 301){
-         e = 0;
-     }
- }
-
+}
 Epilogue
